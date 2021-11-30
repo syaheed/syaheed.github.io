@@ -1,19 +1,121 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-<head>
-<title>Syaheed's Website</title>
-</head>
-<body>
+<STYLE> P { font-size: 1.2em } </STYLE>
+<body bgcolor="#000000" TEXT="#FFFFFF" LINK="#FFFF00" VLINK="#FFFF00" style="width: 1000px">
 
-<h1>Hello!</h1>
-<p>This is a test website.</p>
+<h2>What I cannot create, I do not understand. <sub>&emsp; -Richard Feynman </sub></h2>
 
-<a href="https://syaheed.github.io/demoExpt/memCol.html">Color Memory Test</a>
+<p>&emsp;</p>
+<p>The above is probably my favourite quote. As someone who does research in cognitive neuroscience, I find that it is often too easy to rely on established tools, without needing a grasp of the technicalities involved. Building your own tools is a good way of understanding the intricacies of your data. This idea has led me to play around with programming and tinkering with somewhat unexpected programs and hardware. While my actual research projects can be found <a href="http://syaheed.tech/pubs.html">here</a>, this website is designed as a repository of sorts for these kinds of DIY projects, some of which have been incorporated into actual research publications or conference posters.</p>
 
+<p>If there are any queries, or code requests, feel free to contact me (syaheed'at'gmail.com). <a href="https://github.com/syaheed/public-code">Github here</a> </p> 
+
+<p> Side note, this website is hosted on a <a href="https://www.linode.com/">Linux cloud service</a>. I find that it is really useful to have the ability to <a href="https://en.wikipedia.org/wiki/Secure_Shell">SSH</a> in and make edits from any computer. Additionally, I can also run simulations on the server without bogging down my own computers. </p>
+
+- Syaheed
+
+<p>&emsp;</p>
+
+<hr>
+<p>My attempt at categorising these side projects:</p> 
+<center><p>
+<a href="#Shiny">Shiny demos</a>
+&nbsp;|&nbsp;
+<a href="#Games">Games as experiments</a>
+&nbsp;|&nbsp;
+<a href="#Tech">Technical demos</a>
+&nbsp;|&nbsp;
+<a href="#Hacks">Experiment Programming Hacks</a>
+&nbsp;|&nbsp;
+<a href="#Tricks">General tricks</a>
+</p></center>
+<hr>
+<p>&emsp;</p>
+
+<a name="Shiny"> <h2>Shiny demos</h2>
+<p>Every so often I find myself having to explain concepts that would be aided with some illustrations. In such cases, it would be great if I can just pull out my phone and have an interactive plot I can use as a demonstration. R shiny is a really good tool for this. Here are some examples:</p>
+
+<a href="http://syaheed.tech:3838/apps/v1net/">Online V1 Model</a>
+<p> </p>
+
+<a href="http://syaheed.tech:3838/apps/driftdiffuse/">Online Drift Diffusion Model</a>
+<p> </p>
+
+<a href="http://syaheed.tech:3838/apps/survey/">A custom-built survey/quiz platform. Just swap out the .csv!</a>
+<p> </p>
+
+
+<p>&emsp;</p>
+<hr>
+<p>&emsp;</p>
+
+<a name="Games"><h2>Games as experiments</h2>
+<p>Computer-based cognitive experiments, are essentially video games (only, really boring ones). What data can we mine from actual games? Here are some examples of games which might give us usable data:</p>
+<a href="http://syaheed.tech:3838/apps/tetris/tetris.html">Tetris: A cognitive test to measure learning?</a>
+<p> </p>
+
+<a href="http://syaheed.tech:3838/apps/missleCommand/missleCommand.html">Missle Command / Asteroids: Can we get precision data from a video game?</a>
+<p> </p>
+
+<a href="http://syaheed.tech:3838/apps/Pong/Pong.html">Pong: Because no game collection is complete without it! (Coded entirely in javascript)</a>
+<p> </p>
+
+<p>&emsp;</p>
+<hr>
+<p>&emsp;</p>
+
+<a name="Tech"><h2>Technical demos</h2>
+<p>Sometimes research can benefit by going beyond the standard tools of the trade. This might take the form of new hardware implementations, or new programs to use, or sometimes, going online with the data collection. Here are some possibilities:</p>
+
+<a href="http://syaheed.tech:3838/apps/xbox/xbox.html">A cheap analog input device: An Xbox controller</a>
+<p> </p>
+
+<a href="http://syaheed.tech:3838/apps/PlinkoPhys/Plinko.html">Using game engines: Plinko with physics </a>
+(Linux and Chrome unfortunately not supported)
+<a href="http://syaheed.tech:3838/apps/PlinkoPhys/PlinkoPhysics.gif">Click here for a GIF.</a> 
+<p> </p>
+
+<a href="http://syaheed.tech:3838/apps/SpaDect/SpaDect_java.html">Using pygame and pyjs: How to obtain precision data from a webpage</a>
+<p> </p>
+
+<a href="http://syaheed.tech:3838/apps/camV1/camV1.html">A computer vision test to simulate V1 population coding</a>
+<p> </p>
+
+<a href="http://syaheed.tech:3838/apps/memTest/memTest_ver1.html">Running experiments online? Here's an example! </a>
+GitHub: <a href="https://github.com/syaheed/public-code/blob/master/memTest_ver1.html"> link.</a> 
+</a>
+<p> </p>
+
+
+<p>&emsp;</p>
+<hr>
+<p>&emsp;</p>
+
+<a name="Hacks"><h2>Experiment Programming Hacks</h2>
+<p>Sometimes there are ways of setting up the experiment to record more data, things that you only realise when going beyond GUI-based tools like EPrime and delve into actual programming. Here are some 'hacks' I've learnt:</p>
+<a href="http://syaheed.tech:3838/apps/threading/threading.html">Is your polling method frame-trapped? Try threading.</a>
+<p> </p>
+<a href="http://syaheed.tech:3838/apps/eprime/eprime.html">Does Eprime's data format bother you? Scrape the log file!</a>
+<p> </p>
+<a href="http://syaheed.tech:3838/apps/parallelport/parallelport.html">What does binary have to do with programming EEG studies?</a>
+<p> </p>
+<a href="http://syaheed.tech:3838/apps/raspPi/raspPi.html">Is a Raspberry Pi (ver2) good enough to run experiments on? A case for stimulus timings.</a>
+
+<p>&emsp;</p>
+<hr>
+<p>&emsp;</p>
+
+<a name="Tricks"><h2>General tricks</h2>
+<p>Just some general tricks that weren't obvious to me, but ended up being of use.</p>
+<a href="http://syaheed.tech:3838/apps/github/github.html">How do we embed Github code?</a>
+<p> </p>
+<a href="http://syaheed.tech:3838/apps/animateR/animateR.html">Using R to produce animations</a>
+<p> </p>
+<a href="http://syaheed.tech:3838/apps/brainslice/brainslice.html">Using Matlab's image processing toolbox to reslice dicom images</a>
+
+<p>&emsp;</p>
+<hr>
+<p>&emsp;</p>
 
 </body>
-</html> 
-
-
-
-
+</html>
