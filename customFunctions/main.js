@@ -1,2 +1,2 @@
-import fxn from 'https://syaheed.github.io/customFunctions/fxn.js';
+import fxn from './fxn.js';
 console.log(22);
