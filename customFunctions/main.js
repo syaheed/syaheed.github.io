@@ -1,2 +1,2 @@
-import fxn from 'fxn.js';
+import fxn from './fxn.js';
 console.log(22);
