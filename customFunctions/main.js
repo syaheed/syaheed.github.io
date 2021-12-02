@@ -1,5 +1,3 @@
-import Fudge from "./fxn.js"
+import adder from "./fxn.js"
 
-test = new Fudge();
-
-test.attack();
+console.log(adder(2,3));
