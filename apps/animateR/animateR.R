@@ -1,7 +1,9 @@
 rm(list = ls())
 graphics.off()
 
-path = '/home/syaheed/Desktop/animateR/'
+library("av")
+
+path = 'C:/Users/syahe/OneDrive/Desktop/animateR/'
 setwd(path)
 
 x = 1:360
@@ -13,4 +15,5 @@ for (phase in x){
     dev.off()
 }
 
-system('ffmpeg -i "plot_%05d.tiff" -r 24 -y animated.mp4')
+images = sprintf("plot_%05d.tiff", x)
+av::av_encode_video(images, 'animated.mp4', framerate = 30)
