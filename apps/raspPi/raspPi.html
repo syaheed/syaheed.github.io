@@ -19,14 +19,14 @@
 <p> </p>
 
 <figure>
-<img src="http://syaheed.tech:3838/apps/raspPi/TimeTrials.jpg" alt="Stimulus timings" height="450" width="800">
+<img src="./TimeTrials.jpg" alt="Stimulus timings" height="450" width="800">
 <figcaption>Three runs testing the pi2 and one with my laptop ('vaio'), on the same monitor</figcaption>
 </figure>
 
 <p> There is a delay (of about 4ms) for the Pi that does not happen for the laptop. But a predictable lag might not be a deal-breaker, since you could compensate for that by adjusting the stimulus timing. Unfortunately, it also looks like there's quite a bit of noise around the display timings. Here's where looking at the distrbution of timings might help: </p>
 
 <figure>
-<img src="http://syaheed.tech:3838/apps/raspPi/DistributionTimings.jpg" alt="Distribution of Stimulus timings" height="800" width="800">
+<img src="./DistributionTimings.jpg" alt="Distribution of Stimulus timings" height="800" width="800">
 <figcaption>Distribution of Stimulus timings.</figcaption>
 </figure>
 
@@ -35,6 +35,5 @@
 <p> Clearly, timings with the Pi seem to be much noisier than with a regular laptop. Given this, I wouldn't use a Pi version 2 for time-sensitive experiments. Maybe future iterations might get better in terms of stimulus timings (we did this is 2015, not sure if the Pi3 was out yet), or maybe there is a way to get around this with better code. [I usually use the Psychopy Python library for experiments, and display times are coded in number of frames, but I was having issues getting Psychopy working on the Pi]</p>
 
 <p> </p>
-
-<p> Here's the test code used:</p>
-<script src="http://gist-it.appspot.com/github/syaheed/public-code/blob/master/ProjectPI.py"> </script>
+<p><a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/raspPi/ProjectPI.py">Here</a> is the link to the Matlab code used. The dicom function is found in the image processing toolbox. </p>
+  
