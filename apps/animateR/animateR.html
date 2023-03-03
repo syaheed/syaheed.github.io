@@ -8,10 +8,8 @@
 <p> Sometimes it is helpful to visualise data in time, especially when doing signal processing. While this can be done easily in Matlab by using <a href="https://www.mathworks.com/help/matlab/ref/videowriter.html?requestedDomain=www.mathworks.com">VideoWriter</a> on a structure that contains per-frame information, there doesn't seem to be an equivalent in (base) R. <a href="https://www.ffmpeg.org/">ffmpeg</a> is a great tool for video conversions that can be used via a command-line interface. What could be done is to generate images in R representing each frame, and then calling ffmpeg to stich the images up into a movie format. Here is an example of phase shifting a sine wave 1 degree per frame:</p>
 
 <video width="640" height="480" controls="controls">
-<source src="http://syaheed.tech:3838/apps/animateR/animated.mp4" type="video/mp4">
+<source src="./animated.mp4" type="video/mp4">
 </video>
 
-<p> Here's the R code used. ffmpeg is called from within R using the system function: </p>
-<script src="http://gist-it.appspot.com/github/syaheed/public-code/blob/master/animateR.R?footer=0"> </script>
-
+<p><a href="./animateR.R">Here</a> is the R code used. ffmpeg is called from within R using the system function </p>
 <p> Code tested with both Linux (Arch) and Windows (10). </p>
