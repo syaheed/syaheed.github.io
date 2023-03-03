@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<STYLE> P { font-size: 1.2em } </STYLE>
+<body bgcolor="#000000" TEXT="#FFFFFF" LINK="#FFFF00" VLINK="#FFFF00">
+
+<h1>Escape the Frame Trap!</h1>
+
+<p>The refresh rate of the monitor is a bottleneck in most experiments. For one, it limits how often the display can be updated. Because experiments typically work in terms of display frames, input values, e.g. from a keyboard, are commonly also obtained once per frame. For button presses this temporal resolution might be enough. But when dealing with continous signals, maybe this isn't the best way to record data.</p>
+
+<p> </p>
+
+<p>Essentially, we want to record data at a higher frame rate than the monitor refresh, but still have access to the input so that the display reacts to the input. Eye-tracking studies do this by having the eyetracker work on a seperate process (sometimes a seperate computer), while still allowing the display process to 'talk' to the recording process. We can take the same tactic by starting a dedicated polling thread in our display process. To do this in Python, use the Threading module.</p>
+
+<p> </p>
+
+<p>For example, we used the threading method to continously record the trigger states of the Xbox controller's <a href="http://syaheed.tech:3838/apps/xbox/xbox.html"> analog</a> triggers. Here is a modified version of the start of the code: </p>
+
+<hr>
+
+<p>The readings from the trigger use Pygame, and the clock function is using Psychopy (other timers might work too, but I was using Psychopy for the experiment anyway). You may need a driver to do this (this method was tested with a USB-wired Xbox 360 contoller attached to a PC running Arch Linux, with the <a href="https://aur.archlinux.org/packages/xboxdrv/"> xboxdrv</a> package installed.</p>
+<script src="http://gist-it.appspot.com/github/syaheed/public-code/blob/master/analog_threading.py?slice=0:3"> </script>
+
+<p>Then we initialise pygame, the gamepad, and also a file to write the trigger data to. </p>
+<script src="http://gist-it.appspot.com/github/syaheed/public-code/blob/master/analog_threading.py?slice=3:8"> </script>
+
+<p>Then we start the clock/timer. This runs from the start of the experiment till the end.</p>
+<script src="http://gist-it.appspot.com/github/syaheed/public-code/blob/master/analog_threading.py?slice=8:10"> </script>
+
+<p>And we create a function for the threaded polling. Here we are only saving the 2 trigger states and the experiment clock time, but do save what makes sense for you (trial number, which phase of the trial it is, etc)</p>
+<script src="http://gist-it.appspot.com/github/syaheed/public-code/blob/master/analog_threading.py?slice=10:25"> </script>
+
+<p>And before starting the experiment proper, we start the polling function. </p>
+<script src="http://gist-it.appspot.com/github/syaheed/public-code/blob/master/analog_threading.py?slice=25:30"> </script>
+
+<p>The code for the display can go after that block. This method should give you a consistent 1000hz recording of the analog input, while still being able to call "joyThread.R" or "joyThread.L" in the experiment to determine what feedback to give for the trial, etc. This type of technique might also be useful for other types of inputs, e.g. recording mouse positions at a high and constant rate, useful for cases where you might want to track <a href="http://dx.doi.org/10.1037/xhp0000354"> mouse trajectory</a> later on. </p>

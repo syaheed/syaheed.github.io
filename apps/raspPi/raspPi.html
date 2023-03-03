@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<STYLE> P { font-size: 1.2em } </STYLE>
+<body bgcolor="#000000" TEXT="#FFFFFF" LINK="#FFFF00" VLINK="#FFFF00">
+
+<h1>Python on the Pi</h1>
+
+
+<p> The Raspberry Pi has an ARM processor and supports GNU/Linux disributions and most of the software availible on the platform. This of course includes Python and libraries like PyGame. Curious to see if we could run our psychophysical experiments on it, we got a Pi (version 2), and I created by own test experiment. In psychophysics, timing is crucial, especially in cases where we want to show the stimulus for a very short time. For instance, in my experiments, I want to see how well encoded a stimulus that is shown for only 50-60ms (1/20th of a second!) can be, and how that is modulated by 'attentional' manipulations. </p>
+
+<p> </p>
+
+<p> The test experiment was coded up in Pygame (in Python 2.7), and the stimulus image was a 370 by 370px .bmp file of a spatial grating that was scaled to 150px and rotated to random orientations. This stimulus spanned appromixaely 4 degree visual angles (diameter) on the same 1960 by 1080px screen located 60cm away, refreshing at 60Hz. (The image was loaded only once at the begining of the experiment) </p>
+
+<p> </p>
+
+<p> Stimulus display time was programmed to last 60ms using the time.time() [python's time library]. 1000 of such stimuli were presented in a run, one at a time, with a delay of 350ms between them (also using time.time). [There is also a response component to the experiment, but that's not pertinent]. Below are the the actual times the stimuli were displayed for. I did 3 runs with the Pi, and one run with my laptop.</p>
+
+<p> </p>
+
+<figure>
+<img src="http://syaheed.tech:3838/apps/raspPi/TimeTrials.jpg" alt="Stimulus timings" height="450" width="800">
+<figcaption>Three runs testing the pi2 and one with my laptop ('vaio'), on the same monitor</figcaption>
+</figure>
+
+<p> There is a delay (of about 4ms) for the Pi that does not happen for the laptop. But a predictable lag might not be a deal-breaker, since you could compensate for that by adjusting the stimulus timing. Unfortunately, it also looks like there's quite a bit of noise around the display timings. Here's where looking at the distrbution of timings might help: </p>
+
+<figure>
+<img src="http://syaheed.tech:3838/apps/raspPi/DistributionTimings.jpg" alt="Distribution of Stimulus timings" height="800" width="800">
+<figcaption>Distribution of Stimulus timings.</figcaption>
+</figure>
+
+<p> </p>
+
+<p> Clearly, timings with the Pi seem to be much noisier than with a regular laptop. Given this, I wouldn't use a Pi version 2 for time-sensitive experiments. Maybe future iterations might get better in terms of stimulus timings (we did this is 2015, not sure if the Pi3 was out yet), or maybe there is a way to get around this with better code. [I usually use the Psychopy Python library for experiments, and display times are coded in number of frames, but I was having issues getting Psychopy working on the Pi]</p>
+
+<p> </p>
+
+<p> Here's the test code used:</p>
+<script src="http://gist-it.appspot.com/github/syaheed/public-code/blob/master/ProjectPI.py"> </script>
