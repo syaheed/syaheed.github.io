@@ -1,0 +1,1138 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Betting Game Beta</title>
+  </head>
+<body>
+        <canvas id="canvas" width="1920" height="1080">
+         If you can see this, your browser does not support Canvas
+        </canvas>
+<script>
+
+document.body.style.backgroundColor = "black"; // set background of whole page
+document.getElementById('canvas').style.cursor = "none";
+
+// http://syaheed.tech:3838/apps/memTest/bettingGame_demo.html
+
+// Expt parameters
+const ExptName = "bettingGame_beta"
+const numTrials = 13; //total number of trials
+const durITI = 500; // ITI duration in ms
+const durStim = 300; // Stim duration in ms
+const durMem = 1000; // memory delay duration in ms
+const durFeed = 1000; // min Feedback period
+var trialStart = 0;
+var stimStart = 0;
+var memStart = 0;
+var respStart = 0;
+var feedStart = 0;
+const barHeight = 15; // this is half the height
+const heightMult = 500;
+
+// Screen/Timing settings
+const subjID = makeid(8);
+const exptStart = Date.now();
+const durPerFrame = 1000/60; // frame timing not really all that accurate, better to use the datetime technique
+const scrWidth = window.screen.width; // method to get screen px
+const scrHeight = window.screen.height; 
+const pageWidth  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; // get the page size, which typically is smaller than the screen
+const pageHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
+const pageXcen = pageWidth / 2; // seems better to define the center from the page than from the screen
+const pageYcen = pageHeight / 2.5;
+const barYcen = pageHeight * 0.90;
+const barXcen = pageXcen; // seems better to define the center from the page than from the screen
+const memColRGB = genMemColRGB();
+const memColHex = genMemColHex(memColRGB);
+const xDraw = makeSeq(-360 + pageXcen, 2 , 360);
+const fixSize = 10;
+const tgtOutline = 3;
+const tgtDist = 200;
+const tgtDotSize = 30;
+const cenDotSize = 10;
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+// This is just to initialise stuff
+var withinRespBounds = 0;
+var mousePosX = 0;
+var mousePosY = 0;
+var theta = 180;
+var mouseDist = 100;
+var nearDeg = 180;
+var mouseButton = -1;
+var spareRandom = null;
+var canvas;  
+var ctx;
+var barShift = 0;
+var resp = 0;
+var respList = makeZeroes(6);
+var respList_shifted = makeZeroes(6); 
+var points = 0; 
+var totalPts = 0;
+var tgtCol = 180;
+var tgtHex = '#ffffff';
+var tgtSel = 0;
+var frame = 0;
+var trial = 1;
+var phase = 'iti';
+var exptStarted = 0;
+var exptEnded = 0;
+var str1 = "";
+var str2 = "";
+var addString = "";
+var desText = "";
+var dataString = "Expt,ID,Trial,trialStart,stimStart,memStart,respStart,feedStart,Stim1,Stim2,Stim3,Stim4,Stim5,TgtPos,Target,Resp1,Resp2,Resp3,Resp4,Resp5,Resp6,Points,totalPoints,Language,PsRx,Platform,scrWidth,scrHeight,pageWidth,pageHeight,pixRatio,timezone,datetime";
+var placeCol = "white"
+var distroMode = 0;
+var mouseShift = 0;
+var mouseMoveAfter = 0;
+var PsRx = 0; // this is just a data column to detect tampering. 1000*(totalPoints-pts)/resp1
+
+const xGauss = makeSeq(1,1,360);
+const stdGauss = normPDF(xGauss,180,6);
+
+var yGauss = 0; var yGauss1 = 0;  var yGauss2 = 0;  var yGauss3 = 0;  var yGauss4 = 0; var yGauss5 = 0; var yGauss6 = 0; var yGauss6 = 0; var yGaussDisp = 0;
+resetYGauss();
+
+var d = new Date();
+const datetimestring = d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear() + '--' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+
+
+//Prepare the 5 target locations
+var tgtXPosList = []; var tgtYPosList = [];
+for (i = 0; i < 5; i++) {
+	tgtXPosList[i] = tgtDist * Math.cos(deg2rad(check1360(270 + 72*i))) + pageXcen;
+	tgtYPosList[i] = tgtDist * Math.sin(deg2rad(check1360(270 + 72*i))) + pageYcen;
+}
+
+//Prepare the 5 target colors
+var tgt1ColList = []; var tgt2ColList = []; var tgt3ColList = []; var tgt4ColList = []; var tgt5ColList = [];
+var tgt1HexList = []; var tgt2HexList = []; var tgt3HexList = []; var tgt4HexList = []; var tgt5HexList = [];
+for (i = 0; i < numTrials; i++) {
+	tgt1ColList[i] = Math.ceil(Math.random() * 360); tgt2ColList[i] = Math.ceil(Math.random() * 360); tgt3ColList[i] = Math.ceil(Math.random() * 360); tgt4ColList[i] = Math.ceil(Math.random() * 360); tgt5ColList[i] = Math.ceil(Math.random() * 360);
+	tgt1HexList[i] = memColHex[tgt1ColList[i]-1]; tgt2HexList[i] = memColHex[tgt2ColList[i]-1]; tgt3HexList[i] = memColHex[tgt3ColList[i]-1]; tgt4HexList[i] = memColHex[tgt4ColList[i]-1]; tgt5HexList[i] = memColHex[tgt5ColList[i]-1];
+	} 
+
+//Prepare list of which location is selected
+var tgtSelList = [];
+for (i = 0; i < numTrials; i++) {
+	tgtSelList[i] = Math.ceil(Math.random() * 5);
+	} 
+
+//Prepare list of selected targets
+var tgtColList = [];
+var tgtHexList = [];
+for (i = 0; i < numTrials; i++) {
+    if (tgtSelList[i] == 1){tgtColList[i] = tgt1ColList[i];}
+    if (tgtSelList[i] == 2){tgtColList[i] = tgt2ColList[i];}
+    if (tgtSelList[i] == 3){tgtColList[i] = tgt3ColList[i];}
+    if (tgtSelList[i] == 4){tgtColList[i] = tgt4ColList[i];}
+    if (tgtSelList[i] == 5){tgtColList[i] = tgt5ColList[i];}	
+	tgtHexList[i] = memColHex[tgtColList[i]-1];
+	} 
+	
+		
+// Main prog that runs the 'animation'/frame loop
+init();
+function main() {
+    onmousemove = function(e){mousePosX = e.clientX + mouseShift; mousePosY = e.clientY; mouseMoveAfter=1; return (mousePosX, mousePosY);} // this is a function built in for mouse-handling
+	//if (phase == 'resp' & mousePosX > xDraw[359]){mousePosX = mousePosX - xDraw[359] + xDraw[0]};
+    //if (phase == 'resp' & mousePosX < xDraw[0]){mousePosX = mousePosX + xDraw[359] - xDraw[0]};	
+    onmousedown = function(e){mouseButton = e.button; return (mouseButton);} // this is a function built in for mouse-handling
+	mouseDist = calcDist();
+	
+	
+	if (exptStarted == 0){runStart();}  
+	if (exptStarted == 1){runTrial();}  
+	if (trial>numTrials & exptEnded==0){runEnd();}
+}
+
+function runStart() {
+  reset();
+  
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "white";
+  
+  ctx.fillText("Welcome to the Betting Game! Please maximize the window and then refresh this page before continuing.", 40, 60);
+  ctx.fillText("By proceeding, you consent to providing your performance data to the Fougnie lab at NYU Abu Dhabi", 40, 100);
+  ctx.fillText("At the end of the experiment, remember to download the file before closing the browser tab", 40, 140);
+  
+  ctx.fillText("On each trial, you need to remember the five colors that are shown, and their corresponding locations.", 40, 220);   
+  ctx.fillText("Move the mouse and the bottom color will shift. Make the color you think was in the cued location to be the center.", 40, 260);
+  ctx.fillText("This first bet earns the most points, so be as accurate as possible.", 40, 300);
+  
+  ctx.fillText("You will then be required to make 5 more bets.", 40, 380); 
+  ctx.fillText("With these bets, spread them according to how certain you are.", 40, 420);   
+  ctx.fillText("Simply stacking the bets on top of each other will reduce the height of the distribution built.", 40, 460);   
+  ctx.fillText("Depending on the height of the distribution at the correct color, you will earn points.", 40, 500);  
+  ctx.fillText("Mouse over the central white circle to move to the next trial.", 40, 540);     
+  
+  ctx.fillText("The first 3 trials will be for practice. Accumulated points will reset. The main experiment will consist of 10 trials.", 40, 620); 
+  ctx.fillText("This experiment should take approximately 5 mins to complete. If completed, you will receive ??? to your account.", 40, 660); 
+  ctx.fillText("You will receive a performance bonus (extra cash credited to your account?) if your points exceed ?? by the end.", 40, 700); 
+  
+  ctx.fillText("Place the red pointer and left click on the circle to begin.", 40, 780); 
+  
+  if (mouseDist <= 15){circle(pageXcen,pageYcen,tgtDotSize/2,"green");}
+  if (mouseDist > 15){circle(pageXcen,pageYcen,tgtDotSize/2,"white");} 
+
+  drawMouse() ;
+  if (mouseDist <= tgtDotSize/2 && mouseButton == 0){
+	exptStarted = 1;
+	mouseButton = -1;
+	frame = 0;
+	}  
+}
+
+function runTrial() {
+	if (phase == 'iti'){itiPhase();}	
+	if (phase == 'stim'){stimPhase();}
+	if (phase == 'mem'){memPhase();}	
+	if (phase == 'resp'){respPhase();}
+	if (phase == 'feed'){phaseFeed();}
+}
+
+function runEnd() {
+   if (frame == 0) {
+        exptEnded = 1;
+		document.body.style.background = "white";
+		if (canvas.parentNode != null){
+			canvas.parentNode.removeChild(canvas);
+		}
+		writeStuff();
+		frame = 1;
+  }
+}
+
+function itiPhase() {
+    if (frame == 0){trialStart = Date.now(); tgtCol = tgtColList[trial-1]; tgtHex = tgtHexList[trial-1]; tgtSel = tgtSelList[trial-1]; frame = 1; barShift = 0;}
+	reset();
+	drawPlaceholders();
+	fixCross(pageXcen,pageYcen,fixSize,tgtOutline); 
+    mouseButton = -1;	
+	if (Date.now() - trialStart > durITI){phase = 'stim'; frame = 0;}
+}
+
+function stimPhase() {
+    if (frame == 0){frame = 1; stimStart = Date.now() - trialStart;}
+	reset();
+	drawPlaceholders();
+	fixCross(pageXcen,pageYcen,fixSize,tgtOutline); 
+    circle(tgtXPosList[0],tgtYPosList[0],tgtDotSize,tgt1HexList[trial-1]);
+    circle(tgtXPosList[1],tgtYPosList[1],tgtDotSize,tgt2HexList[trial-1]);
+    circle(tgtXPosList[2],tgtYPosList[2],tgtDotSize,tgt3HexList[trial-1]);
+    circle(tgtXPosList[3],tgtYPosList[3],tgtDotSize,tgt4HexList[trial-1]);
+    circle(tgtXPosList[4],tgtYPosList[4],tgtDotSize,tgt5HexList[trial-1]);	
+	//drawRespBar() ;
+	mouseButton = -1;
+	if (Date.now() - trialStart > durStim + durITI ){phase = 'mem'; frame = 0;}
+}
+
+function memPhase() {
+    if (frame == 0){frame = 1; memStart = Date.now() - trialStart;}
+	reset();
+	drawPlaceholders();
+	fixCross(pageXcen,pageYcen,fixSize,tgtOutline); 
+	mouseButton = -1;
+	if (Date.now() - trialStart > durStim + durITI + durMem ){phase = 'resp'; frame = 0;}
+}
+
+function respPhase() {
+    if (frame == 0){respStart = Date.now() - trialStart; frame = 1; mouseMoveAfter = 0; }
+	reset();
+	drawPlaceholders();
+	if (mouseMoveAfter == 0){placeCol = "white";}
+    if(resp == 0 && mouseMoveAfter == 1){mouseShift = 0; placeCol = memColHex[check0359(nearDeg)];}
+	if(resp >= 1){placeCol = memColHex[check0359(nearDeg+barShift)];}
+	circle(tgtXPosList[tgtSel-1],tgtYPosList[tgtSel-1],tgtDotSize, placeCol);
+	fixCross(pageXcen,pageYcen,fixSize,tgtOutline); 
+	
+	if (nearDeg > 0 & mouseButton == 0 && mouseMoveAfter == 1){
+		mouseButton = -1;
+		resp = resp+1; respList[resp-1] = check1360(nearDeg); 
+		if(resp==1){respList_shifted[0] = check1360(barShift-180);}
+		if(resp>1){respList_shifted[resp-1] = check1360(nearDeg + barShift);}
+		mouseShift = Math.round(Math.random()*360)-180;
+		mouseMoveAfter = 0;
+	}
+	
+    if (resp == 0){
+		barShift = nearDeg-180; 
+		if (barShift == -180){
+			    ctx.font = "15px Arial";
+				ctx.fillStyle = "white";
+				ctx.fillText("Move the other way if you want to reach a further color", barXcen - 150, barYcen + barHeight*3); 
+		}
+		if (barShift > -180 & barShift < 180){
+			    ctx.font = "15px Arial";
+				ctx.fillStyle = "white";
+				ctx.fillText("Mouse left/right to put the target color in the center, then left click", barXcen - 200, barYcen + barHeight*3); 
+		}
+	}
+	
+	if (resp == 1){
+	    barShift = respList[0]-180; 
+	}
+	
+    if (resp >= 1){
+		ctx.font = "15px Arial";
+		ctx.fillStyle = "white";
+		ctx.fillText("Mouse left/right to place a bet, then left click", barXcen - 150, barYcen + barHeight*3); 
+	}
+	
+	yGauss = simDistro(respList);
+	withinRespBounds = findRespBound();
+	nearDeg = findResp();
+	drawRespBar() ;
+	drawDistro(xGauss,heightMult) ;
+    drawGuidelines() ;
+
+	  // cheats (use to debug error/points calculations only)
+      //ctx.beginPath();  
+	  //ctx.strokeStyle = "green";
+	  //ctx.lineWidth = 3;
+	  //ctx.moveTo(xDraw[check0359(tgtCol-barShift-1)], barYcen-2*barHeight); 
+	  //ctx.lineTo(xDraw[check0359(tgtCol-barShift-1)], barYcen);
+	  //ctx.stroke(); 
+	
+	if (resp == 6){phase = 'feed'; mouseButton = -1; nearDeg = 0; frame = 0;}
+}
+
+function phaseFeed() {
+   if (frame == 0){points = calcPoints(); totalPts = totalPts+points; frame = 1;
+      str1 = "+ " + points + " pts";
+      str2 = "Total: " + totalPts + " pts";
+	  PsRx = Math.round(1000*(totalPts-points)/respList_shifted[0]);
+	  distroMode = findModeIdx(yGauss);
+	  feedStart = Date.now() - trialStart;
+	  relativeStart = trialStart-exptStart;
+	  tempString = ExptName + ',' + subjID + ',' + trial + ',' + relativeStart + ',' + stimStart + ',' + memStart + ',' + respStart + ',' + feedStart + ',' + tgt1ColList[trial-1] + ',' + tgt2ColList[trial-1] + ',' + tgt3ColList[trial-1] + ',' + tgt4ColList[trial-1] + ',' + tgt5ColList[trial-1] + ',' + tgtSel + ',' + tgtCol + ',' + respList_shifted[0] + ',' + respList_shifted[1] + ',' + respList_shifted[2] + ',' + respList_shifted[3] + ',' + respList_shifted[4] + ',' + respList_shifted[5] + ',' + points + ',' + totalPts + ',' + navigator.language + ',' + PsRx + ',' + navigator.userAgent + ',' + scrWidth + ',' + scrHeight + ',' + pageWidth + ',' + pageHeight + ',' + window.devicePixelRatio + ',' + timezone + ',' + datetimestring;    
+  	  dataString = dataString + '\n' + tempString;
+	  if (trial == 3){totalPts = 0;}
+   }
+   reset();
+   drawPlaceholders();
+   circle(tgtXPosList[tgtSel-1],tgtYPosList[tgtSel-1],tgtDotSize, tgtHex);
+   circle(pageXcen,pageYcen,cenDotSize,"white");	
+   ctx.font = "20px Arial";
+   ctx.fillStyle = "white";
+   ctx.fillText(str1, pageXcen-40, pageYcen-30);
+   ctx.fillText(str2, pageXcen-50, pageYcen+50);   
+   drawRespBar() ;
+   drawDistro(xGauss, heightMult) ;   
+   drawMouse();
+   
+    ctx.font = "15px Arial";
+	ctx.fillStyle = "white";
+	ctx.fillText("Take a break if you need to. Bring the red dot to the center to continue.", barXcen - 250, barYcen + barHeight*3); 
+	ctx.beginPath();  
+	ctx.strokeStyle = "green";
+	ctx.lineWidth = 3;
+	ctx.moveTo(xDraw[check0359(tgtCol-barShift-1)], barYcen-2*barHeight); 
+	ctx.lineTo(xDraw[check0359(tgtCol-barShift-1)], barYcen);
+	ctx.stroke();   
+   
+   if (mouseDist <= cenDotSize*2 && Date.now() - trialStart - feedStart > durFeed){frame = 0; phase = 'iti'; resp = 0; resetYGauss(); respList = makeZeroes(6); trial = trial + 1; stimStart = 0; memStart = 0; respStart = 0; feedStart = 0; distroMode = 0; barShift = 0; nearDeg = 180;}
+}
+
+function calcDist() {
+   mouseDist = ((mousePosY - pageYcen)**2 + (mousePosX - pageXcen)**2) ** 0.5 ; 
+   return(mouseDist);
+}
+
+function circle(x,y,r,c) {
+  ctx.beginPath();
+  ctx.fillStyle = c;  
+  ctx.arc(x, y, r, 0, Math.PI*2, true);
+  ctx.fill();
+}
+
+function drawMouse() {
+  ctx.beginPath();
+  ctx.fillStyle = "red";  
+  ctx.arc(mousePosX, mousePosY, 5, 0, Math.PI*2, true);
+  ctx.fill();
+}
+
+
+function circleOutline(x,y,r,w) {
+  ctx.beginPath();
+  ctx.strokeStyle = "grey";  
+  ctx.arc(x, y, r, 0, Math.PI*2, true);
+  ctx.lineWidth = w;  
+  ctx.stroke();
+}
+
+function drawPlaceholders() {
+  for (i = 0; i < 5; i++) { 
+  circleOutline(tgtXPosList[i], tgtYPosList[i], tgtDotSize, tgtOutline);
+ }
+}
+
+function resetYGauss() {
+	yGauss = makeZeroes(360);
+	yGauss1 = makeZeroes(360);
+	yGauss2 = makeZeroes(360);
+	yGauss3 = makeZeroes(360);
+	yGauss4 = makeZeroes(360);
+	yGauss5 = makeZeroes(360);
+	yGauss6 = makeZeroes(360);
+	yGaussDisp = makeZeroes(360);
+}
+
+function fixCross(x,y,r,w) {
+  ctx.beginPath();
+  ctx.strokeStyle = "white";  
+  ctx.lineWidth = w;   
+  ctx.moveTo(x - r, y);
+  ctx.lineTo(x + r, y);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.strokeStyle = "white";  
+  ctx.lineWidth = w;   
+  ctx.moveTo(x, y - r);
+  ctx.lineTo(x, y + r);
+  ctx.stroke();
+}
+  
+function drawDistro(xGauss,mult) {
+  yGaussDisp = yGauss;
+  if (resp == 0) {yGaussDisp = addArray(yGauss, multArray(stdGauss,2)) }
+  if (resp > 0 && resp < 6 && withinRespBounds == 1 && mouseMoveAfter==1) {
+	//yGaussDisp = addArray(yGauss, multArray(circshift(stdGauss,nearDeg-180),1))
+	yGaussDisp = addArray(yGauss,calComponent(yGauss,nearDeg));
+	}
+  for (i = 0; i < 360; i += 1) {
+	  ctx.beginPath();  
+	  ctx.strokeStyle = '#FFFFFF';
+	  ctx.lineWidth = 3;
+	  ctx.moveTo(xDraw[i], barYcen-barHeight); 
+	  ctx.lineTo(xDraw[i], Math.round(-1*mult*yGaussDisp[i])+barYcen-barHeight);
+	  ctx.stroke();
+  }
+}
+
+function drawRespBar() {
+  for (i = 0; i < 360; i += 1) { 
+	  ctx.beginPath();  
+	  col_idx = check0359(barShift+i);
+	  ctx.strokeStyle = memColHex[col_idx];
+	  ctx.lineWidth = 3;
+	  ctx.moveTo(xDraw[i], barYcen-barHeight); 
+	  ctx.lineTo(xDraw[i], barYcen+barHeight);
+	  ctx.stroke();
+  }
+}
+
+function drawGuidelines() {
+  if (resp == 0 && mouseMoveAfter==1){
+      ctx.beginPath();  
+	  ctx.strokeStyle = "black";
+	  ctx.lineWidth = 3;
+	  ctx.moveTo(xDraw[180-1], barYcen-2*barHeight); 
+	  ctx.lineTo(xDraw[180-1], barYcen);
+	  ctx.stroke();
+  }
+  
+  if (resp >= 1 && withinRespBounds == 1 && mouseMoveAfter==1){
+      ctx.beginPath();  
+	  ctx.strokeStyle = "black";
+	  ctx.lineWidth = 3;
+	  ctx.moveTo(xDraw[nearDeg-1], barYcen-2*barHeight); 
+	  ctx.lineTo(xDraw[nearDeg-1], barYcen);
+	  ctx.stroke();
+  }     
+}
+
+function reset() {
+  ctx.clearRect(0, 0, pageWidth, pageHeight);
+  ctx.fillStyle = "black";
+  rect(0,0,pageWidth,pageHeight);  
+}
+
+function rect(x,y,w,h) {
+  ctx.beginPath();
+  ctx.rect(x,y,w,h);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function init() {
+  canvas = document.getElementById("canvas");
+  ctx = canvas.getContext("2d");
+  ctx.canvas.width  = window.innerWidth - 40; // remove scrolling capabilities
+  ctx.canvas.height = window.innerHeight - 40; // remove scrolling capabilities  
+  return setInterval(main, durPerFrame);
+}
+
+function normArray(x) {
+  y = new Array(x.length);  
+  const sumVal = sumArray(x);
+  for (i = 0; i < x.length; i += 1) { 
+	  y[i] = x[i] / sumVal;
+  }
+  return(y);
+}
+
+function sumArray(x) {
+  sumVal = 0;
+  for (i = 0; i < x.length; i += 1) { 
+	  sumVal += x[i];
+  }
+  return(sumVal);
+}
+
+function circshift(x,times) {
+  idx = idxshift(makeSeq(0,1,x.length),times);
+  y = new Array(x.length);
+  for (i = 0; i < x.length; i += 1) { 
+	  y[i] = x[idx[i]];  
+  }
+  return(y);
+}
+  
+function idxshift(x,times) {
+  idx = new Array(x.length);
+  for (i = 0; i < x.length; i += 1) { 
+	  idx[i] = x[i] - times;
+	  if (idx[i] >= x.length){idx[i] = idx[i] - x.length}
+	  if (idx[i] < 0){idx[i] = idx[i] + x.length}	  
+  }
+  return(idx);
+}
+
+function findResp() {
+  y = new Array(360);
+  if (withinRespBounds == 1) {
+	  for (i = 0; i < xDraw.length; i += 1) { 
+		  y[i] = Math.abs(xDraw[i] - mousePosX);
+	  }
+	  z = indexOfSmallest(y);
+	  return(check1360(z+1));
+  } else {
+	return(0);
+  }
+}
+
+function findRespBound(){
+  withinRespBounds = 0; mouseButton = -1;
+  if (mousePosX > xDraw[0] - 80 & mousePosX < xDraw[xDraw.length -1] + 80) {
+		withinRespBounds = 1 ;
+	}
+	return(withinRespBounds);
+}
+
+function indexOfSmallest(a) {
+ lowest = 0;
+ for (var i = 1; i < a.length; i++) {
+  if (a[i] < a[lowest]) lowest = i;
+ }
+ return(lowest);
+}
+
+function addArray(x1,x2) {
+  y = new Array(x1.length);
+  for (i = 0; i < x1.length; i += 1) { 
+	  y[i] = x1[i] + x2[i];
+  }
+  return(y);
+}
+
+function addGaussians(x1,x2,x3,x4,x5,x6) {
+  y = new Array(x1.length);
+  for (i = 0; i < x1.length; i += 1) { 
+	  y[i] = x1[i] + x2[i] + x3[i] + x4[i] + x5[i] + x6[i];
+  }
+  return(y);
+}
+
+function multArray(x,mult) {
+  y = new Array(x.length);
+  for (i = 0; i < x.length; i += 1) { 
+	  y[i] = x[i] * mult;
+  }
+  return(y);
+}
+
+function findModeIdx(x) {
+  idx = 0;
+  for (i = 1; i < x.length; i += 1) { 
+	  if (x[i] > x[idx]){idx = i;}   
+  }
+  return(idx);
+}
+
+function makeZeroes(x) {
+  y = new Array(x);
+  for (i = 0; i < x; i += 1) { 
+	  y[i] = 0;
+  }
+  return(y);
+}
+
+function makeSeq(begin,adder,times) {
+  y = new Array(times);
+  for (i = 0; i < times; i += 1) {
+	  y[i] = begin + adder*i;
+  }
+  return(y);
+}
+
+function normpdf_point(x,xbar,sigma) {
+	y = (1/(sigma*Math.sqrt(2*Math.PI)))   *  Math.exp(-0.5*Math.pow( (x-xbar)/sigma , 2));
+	return(y);	
+}
+
+function normPDF(xarray,xbar,sigma) {
+	yarray = xarray.map(x => {return normpdf_point(x,xbar,sigma)});
+	return(yarray);
+}
+  
+function check1360(theta) {
+  if (theta > 360){ 
+	theta = theta - 360;
+  } 
+ if (theta <= 0){ 
+	theta = theta + 360;
+  }   
+  return(theta);
+}
+
+function check0359(theta) {
+  if (theta >= 360){ 
+	theta = theta - 360;
+  } 
+ if (theta < 0){ 
+	theta = theta + 360;
+  }   
+  return(theta);
+}
+
+function errorCheck(theta) {
+  if (theta > 180){ 
+	theta = theta - 360;
+  } 
+ if (theta < -180){ 
+	theta = theta + 360;
+  }   
+  return(theta);
+}
+
+function genMemColRGB(){
+	return([
+		[246, 37, 111],
+		[246, 37, 110],
+		[246, 37, 109],
+		[246,	37,	107.5],
+		[246,	37,	106],
+		[246,	37,	104.5],
+		[246,	37,	103],
+		[246,	37.5,	102],
+		[246,	38,	101],
+		[246,	38.5,	99.5],
+		[246,	39,	98],
+		[246,	39.5,	96.5],
+		[246,	40,	95],
+		[246,	41,	94],
+		[246,	42,	93],
+		[245.5,	42.5,	91.5],
+		[245,	43,	90],
+		[245,	44,	89],
+		[245,	45,	88],
+		[245,	46,	86.5],
+		[245,	47,	85],
+		[244.5,	47.5,	84],
+		[244,	48,	83],
+		[243.5,	49,	81.5],
+		[243,	50,	80],
+		[242.5,	51,	79],
+		[242,	52,	78],
+		[242,	53,	76.5],
+		[242,	54,	75],
+		[241.5,	55.5,	74],
+		[241,	57,	73],
+		[240.5,	58,	71.5],
+		[240,	59,	70],
+		[239,	60,	69],
+		[238,	61,	68],
+		[237.5,	62,	66.5],
+		[237,	63,	65],
+		[236.5,	64,	64],
+		[236,	65,	63],
+		[235.5,	66,	62],
+		[235,	67,	61],
+		[234,	68.5,	60],
+		[233,	70,	59],
+		[232.5,	71,	57.5],
+		[232,	72,	56],
+		[231,	73,	55],
+		[230,	74,	54],
+		[229,	75,	53],
+		[228,	76,	52],
+		[227.5,	77,	51],
+		[227,	78,	50],
+		[226,	79,	49],
+		[225,	80,	48],
+		[224,	81,	46.5],
+		[223,	82,	45],
+		[222,	83,	44],
+		[221,	84,	43],
+		[220,	85,	42],
+		[219,	86,	41],
+		[218,	87,	40],
+		[217,	88,	39],
+		[216,	89,	38],
+		[215,	90,	37],
+		[214,	91,	36.5],
+		[213,	92,	36],
+		[212,	93,	35],
+		[211,	94,	34],
+		[210,	95,	33],
+		[209,	96,	32],
+		[208,	97,	31],
+		[207,	98,	30],
+		[205.5,	98.5,	29.5],
+		[204,	99,	29],
+		[203,	100,	28],
+		[202,	101,	27],
+		[201,	102,	26.5],
+		[200,	103,	26],
+		[198.5,	103.5,	25],
+		[197,	104,	24],
+		[196,	105,	23.5],
+		[195,	106,	23],
+		[194,	107,	22.5],
+		[193,	108,	22],
+		[191.5,	108.5,	21.5],
+		[190,	109,	21],
+		[189,	110,	20.5],
+		[188,	111,	20],
+		[186.5,	111.5,	19.5],
+		[185,	112,	19],
+		[183.5,	113,	19],
+		[182,	114,	19],
+		[181,	114.5,	19],
+		[180,	115,	19],
+		[178.5,	115.5,	19],
+		[177,	116,	19],
+		[176,	117,	19],
+		[175,	118,	19],
+		[173.5,	118.5,	19],
+		[172,	119,	19],
+		[170.5,	119.5,	19.5],
+		[169,	120,	20],
+		[168,	120.5,	20.5],
+		[167,	121,	21],
+		[165.5,	121.5,	21.5],
+		[164,	122,	22],
+		[162.5,	123,	22.5],
+		[161,	124,	23],
+		[160,	124.5,	24],
+		[159,	125,	25],
+		[157.5,	125.5,	25.5],
+		[156,	126,	26],
+		[154.5,	126.5,	27],
+		[153,	127,	28],
+		[152,	127.5,	28.5],
+		[151,	128,	29],
+		[149.5,	128.5,	30],
+		[148,	129,	31],
+		[146.5,	129,	32],
+		[145,	129,	33],
+		[144,	129.5,	34],
+		[143,	130,	35],
+		[141.5,	130.5,	36],
+		[140,	131,	37],
+		[138.5,	131.5,	38],
+		[137,	132,	39],
+		[135.5,	132.5,	40],
+		[134,	133,	41],
+		[133,	133.5,	42.5],
+		[132,	134,	44],
+		[130.5,	134,	45],
+		[129,	134,	46],
+		[127.5,	134.5,	47],
+		[126,	135,	48],
+		[125,	135.5,	49],
+		[124,	136,	50],
+		[122.5,	136,	51.5],
+		[121,	136,	53],
+		[119.5,	136.5,	54],
+		[118,	137,	55],
+		[117,	137,	56.5],
+		[116,	137,	58],
+		[114.5,	137.5,	59],
+		[113,	138,	60],
+		[111.5,	138,	61.5],
+		[110,	138,	63],
+		[109,	138.5,	64],
+		[108,	139,	65],
+		[106.5,	139,	66.5],
+		[105,	139,	68],
+		[103.5,	139.5,	69.5],
+		[102,	140,	71],
+		[101,	140,	72],
+		[100,	140,	73],
+		[98.5,	140.5,	74.5],
+		[97,	141,	76],
+		[95.5,	141,	77.5],
+		[94,	141,	79],
+		[93,	141,	80],
+		[92,	141,	81],
+		[90.5,	141.5,	82.5],
+		[89,	142,	84],
+		[88,	142,	85.5],
+		[87,	142,	87],
+		[85.5,	142,	88.5],
+		[84,	142,	90],
+		[82.5,	142,	91],
+		[81,	142,	92],
+		[80,	142,	93.5],
+		[79,	142,	95],
+		[77.5,	142.5,	96.5],
+		[76,	143,	98],
+		[75,	143,	99.5],
+		[74,	143,	101],
+		[72.5,	143,	102.5],
+		[71,	143,	104],
+		[70,	143,	105],
+		[69,	143,	106],
+		[67.5,	143,	107.5],
+		[66,	143,	109],
+		[65,	143,	110.5],
+		[64,	143,	112],
+		[63,	143,	113.5],
+		[62,	143,	115],
+		[61,	143,	116],
+		[60,	143,	117],
+		[58.5,	143,	118.5],
+		[57,	143,	120],
+		[56,	143,	121.5],
+		[55,	143,	123],
+		[54,	143,	124.5],
+		[53,	143,	126],
+		[52.5,	143,	127],
+		[52,	143,	128],
+		[51,	143,	129.5],
+		[50,	143,	131],
+		[49.5,	143,	132.5],
+		[49,	143,	134],
+		[48,	143,	135],
+		[47,	143,	136],
+		[46.5,	143,	137.5],
+		[46,	143,	139],
+		[46,	142.5,	140],
+		[46,	142,	141],
+		[45.5,	142,	142.5],
+		[45,	142,	144],
+		[45,	142,	145],
+		[45,	142,	146],
+		[45,	142,	147.5],
+		[45,	142,	149],
+		[45.5,	141.5,	150],
+		[46,	141,	151],
+		[46.5,	141,	152.5],
+		[47,	141,	154],
+		[47.5,	141,	155],
+		[48,	141,	156],
+		[49,	140.5,	157],
+		[50,	140,	158],
+		[50.5,	140,	159],
+		[51,	140,	160],
+		[52,	139.5,	161],
+		[53,	139,	162],
+		[54.5,	139,	163.5],
+		[56,	139,	165],
+		[57,	138.5,	165.5],
+		[58,	138,	166],
+		[59.5,	138,	167],
+		[61,	138,	168],
+		[62.5,	137.5,	169],
+		[64,	137,	170],
+		[65.5,	137,	171],
+		[67,	137,	172],
+		[68.5,	136.5,	173],
+		[70,	136,	174],
+		[71.5,	135.5,	174.5],
+		[73,	135,	175],
+		[75,	135,	176],
+		[77,	135,	177],
+		[78.5,	134.5,	177.5],
+		[80,	134,	178],
+		[82,	133.5,	179],
+		[84,	133,	180],
+		[85.5,	132.5,	180.5],
+		[87,	132,	181],
+		[89,	132,	181.5],
+		[91,	132,	182],
+		[92.5,	131.5,	182.5],
+		[94,	131,	183],
+		[96,	130.5,	183.5],
+		[98,	130,	184],
+		[100,	129.5,	184.5],
+		[102,	129,	185],
+		[104,	128.5,	185.5],
+		[106,	128,	186],
+		[107.5,	127.5,	186.5],
+		[109,	127,	187],
+		[111,	126.5,	187.5],
+		[113,	126,	188],
+		[115,	125.5,	188],
+		[117,	125,	188],
+		[119,	124,	188.5],
+		[121,	123,	189],
+		[123,	122.5,	189],
+		[125,	122,	189],
+		[127,	121.5,	189],
+		[129,	121,	189],
+		[130.5,	120.5,	189.5],
+		[132,	120,	190],
+		[134,	119,	190],
+		[136,	118,	190],
+		[138,	117.5,	190],
+		[140,	117,	190],
+		[142,	116.5,	190],
+		[144,	116,	190],
+		[145.5,	115,	189.5],
+		[147,	114,	189],
+		[149,	113.5,	189],
+		[151,	113,	189],
+		[153,	112,	189],
+		[155,	111,	189],
+		[156.5,	110,	188.5],
+		[158,	109,	188],
+		[160,	108.5,	188],
+		[162,	108,	188],
+		[163.5,	107,	187.5],
+		[165,	106,	187],
+		[167,	105.5,	186.5],
+		[169,	105,	186],
+		[170.5,	104,	185.5],
+		[172,	103,	185],
+		[174,	102,	184.5],
+		[176,	101,	184],
+		[177.5,	100,	183.5],
+		[179,	99,	183],
+		[180.5,	98,	182.5],
+		[182,	97,	182],
+		[184,	96,	181.5],
+		[186,	95,	181],
+		[187.5,	94,	180.5],
+		[189,	93,	180],
+		[190.5,	92,	179],
+		[192,	91,	178],
+		[193.5,	90,	177.5],
+		[195,	89,	177],
+		[196.5,	88,	176],
+		[198,	87,	175],
+		[199.5,	86,	174.5],
+		[201,	85,	174],
+		[202.5,	84,	173],
+		[204,	83,	172],
+		[205,	82,	171],
+		[206,	81,	170],
+		[207.5,	80,	169],
+		[209,	79,	168],
+		[210,	78,	167.5],
+		[211,	77,	167],
+		[212.5,	76,	166],
+		[214,	75,	165],
+		[215,	73.5,	164],
+		[216,	72,	163],
+		[217.5,	71,	162],
+		[219,	70,	161],
+		[220,	69,	159.5],
+		[221,	68,	158],
+		[222,	67,	157],
+		[223,	66,	156],
+		[224,	64.5,	155],
+		[225,	63,	154],
+		[226,	62,	153],
+		[227,	61,	152],
+		[228,	60,	150.5],
+		[229,	59,	149],
+		[230,	58,	148],
+		[231,	57,	147],
+		[232,	56,	146],
+		[233,	55,	145],
+		[233.5,	54,	143.5],
+		[234,	53,	142],
+		[235,	51.5,	141],
+		[236,	50,	140],
+		[236.5,	49,	138.5],
+		[237,	48,	137],
+		[237.5,	47.5,	136],
+		[238,	47,	135],
+		[239,	46,	133.5],
+		[240,	45,	132],
+		[240.5,	44,	131],
+		[241,	43,	130],
+		[241.5,	42.5,	128.5],
+		[242,	42,	127],
+		[242.5,	41,	125.5],
+		[243,	40,	124],
+		[243,	39.5,	123],
+		[243,	39,	122],
+		[243.5,	38.5,	120.5],
+		[244,	38,	119],
+		[244.5,	37.5,	118],
+		[245,	37,	117],
+		[245,	37,	115.5],
+		[245,	37,	114],
+		[245.5,	37,	112.5]
+	]);
+}
+
+function genMemColHex(x) {
+  y = new Array(360);
+  for (i = 0; i < 360; i += 1) { 
+	  y[i] = rgb2hex(x[i][0],x[i][1],x[i][2])
+  }
+  return(y);
+}
+
+function rgb2hex(r,g,b) {
+  red = rgbToHex(Math.round(r));
+  green = rgbToHex(Math.round(g));
+  blue = rgbToHex(Math.round(b));
+  return '#'+red+green+blue;
+}  
+
+function rgbToHex(rgb) {
+  hex = Number(rgb).toString(16);
+  if (hex.length < 2) {
+       hex = "0" + hex;
+  }
+  return hex;
+}  
+
+function normalRandom() {
+    // https://gist.github.com/bluesmoon/7925696
+	var val, u, v, s, mul;
+
+	if(spareRandom !== null) {
+		val = spareRandom;
+		spareRandom = null;
+	}
+	else {
+		do
+		{
+			u = Math.random()*2-1;
+			v = Math.random()*2-1;
+
+			s = u*u+v*v;
+		} while(s === 0 || s >= 1);
+
+		mul = Math.sqrt(-2 * Math.log(s) / s);
+
+		val = u * mul;
+		spareRandom = v * mul;
+	}
+	return val;
+}
+
+function rnorm(mean, stddev) {
+	var r = normalRandom();
+	r = r * stddev + mean;
+	return Math.round(r);
+}  
+
+function calcPoints() { 
+    y = circshift(yGauss,barShift-1);
+    return(Math.round(y[tgtCol-1]*heightMult))
+}  
+
+function simDistro(respList) {
+    if (respList[0]>0){ yGauss1 = multArray(circshift(stdGauss,respList[0]-180 - barShift),2);}
+    if (respList[1]>0){ yGauss2 = calComponent(addGaussians(yGauss1,yGauss2,yGauss3,yGauss4,yGauss5,yGauss6),respList[1]);}
+    if (respList[2]>0){ yGauss3 = calComponent(addGaussians(yGauss1,yGauss2,yGauss3,yGauss4,yGauss5,yGauss6),respList[2]);}
+    if (respList[3]>0){ yGauss4 = calComponent(addGaussians(yGauss1,yGauss2,yGauss3,yGauss4,yGauss5,yGauss6),respList[3]);}
+    if (respList[4]>0){ yGauss5 = calComponent(addGaussians(yGauss1,yGauss2,yGauss3,yGauss4,yGauss5,yGauss6),respList[4]);}
+    if (respList[5]>0){ yGauss6 = calComponent(addGaussians(yGauss1,yGauss2,yGauss3,yGauss4,yGauss5,yGauss6),respList[5]);}
+	yGauss = addGaussians(yGauss1,yGauss2,yGauss3,yGauss4,yGauss5,yGauss6);
+	return(yGauss)
+}
+
+
+function deg2rad(deg){
+  return deg * (Math.PI/180);
+}
+
+function calComponent(prevDistro,currResp){
+  c = multArray(circshift(stdGauss,currResp-180),(1-prevDistro[currResp-1]**0.4));
+  return(c);  
+}
+
+function makeid(length) {
+   //https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+   var result           = '';
+   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   var charactersLength = characters.length;
+   for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+}
+
+function rad2deg(rad){
+  return rad * (180/Math.PI);
+}
+
+function writeStuff() {
+    var linebreak = document.createElement("BR");
+	
+	desText = document.createElement("p");
+	addString = document.createTextNode("This is the end of the experiment. Thank you for your participation.");
+	desText.appendChild(addString); 
+	document.body.appendChild(desText); 	
+
+	desText = document.createElement("p");
+	addString = document.createTextNode("Please download the below link and submit it to the researchers to get your credit/allowance."); // add link/email address? depends how the participant was recruited
+	desText.appendChild(addString); 
+	document.body.appendChild(desText); 
+
+    var textField = document.createElement("TEXTAREA"); 
+    var dataText = document.createTextNode(dataString);
+	textField.appendChild(dataText);
+	
+    var data = new Blob([textField.value], {type: 'text/plain;charset=UTF-8'});
+    textFileURL = window.URL.createObjectURL(data);
+    var downloadLink = document.createElement("a");
+
+    downStr = "Right click this link above save it with the name: " + ExptName + "_" + subjID + ".csv"
+    var linkText = document.createTextNode(downStr);
+    downloadLink.appendChild(linebreak);
+    downloadLink.appendChild(linkText);
+    downloadLink.title = "Right click to download the data";
+    downloadLink.href = textFileURL;
+    document.body.appendChild(downloadLink);   
+
+    IDStr = "Your survey key is: " + subjID;
+
+	desText = document.createElement("p");
+	addString = document.createTextNode(IDStr);
+	desText.appendChild(addString); document.body.appendChild(desText); 	
+	
+	desText = document.createElement("p");
+	addString = document.createTextNode("Do not close this page before downloading, and do not tamper with the downloaded file.");
+	desText.appendChild(addString); document.body.appendChild(desText);
+
+	desText = document.createElement("p");
+	addString = document.createTextNode("Please submit the file to [insert some submission platform or email]");
+	desText.appendChild(addString); document.body.appendChild(desText); 	
+	
+    desText = document.createElement("p");
+	addString = document.createTextNode("Allow for up to 3 days for the payment to be processed.");
+	desText.appendChild(addString); 
+	document.body.appendChild(desText); 
+	
+    desText = document.createElement("p");
+	addString = document.createTextNode("If there are any issues or you would simply like to learn more about this experiment, please email the researcher at: sbj2@nyu.edu");
+	desText.appendChild(addString); 
+	document.body.appendChild(desText); 
+}
+      
+</script>
+</body>
+</html>

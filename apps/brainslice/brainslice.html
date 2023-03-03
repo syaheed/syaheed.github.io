@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<STYLE> P { font-size: 1.2em } </STYLE>
+<body bgcolor="#000000" TEXT="#FFFFFF" LINK="#FFFF00" VLINK="#FFFF00">
+
+<h1>Image Processing and Brain Slicing</h1>
+
+<p> </p>
+<p> MRI images are typically obtained slice-by-slice, and the 3d volume is reconstructed from this. I got a hold of my own scan and wanted to look at it, but I only had a series of dicom images. Here is my attempt to put together a brain viewer without having to use specialised software or packages. </p>
+<p> </p>
+
+<figure>
+  <img src="http://syaheed.tech:3838/apps/brainslice/brainslice.png" height="400" width="500">
+  <figcaption>A reslicing of the dicom images (240px * 240px, 150 slices)</figcaption>
+</figure>
+
+<p> Here's the Matlab code used. The dicom function is found in the image processing toolbox. </p>
+<script src="http://gist-it.appspot.com/github/syaheed/public-code/blob/master/brainslicing.m"> </script>
+

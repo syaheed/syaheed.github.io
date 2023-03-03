@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<STYLE> P { font-size: 1.2em } </STYLE>
+<body bgcolor="#000000" TEXT="#FFFFFF" LINK="#FFFF00" VLINK="#FFFF00">
+
+<h2>
+Pong
+</h2>
+
+<p>
+While cognitive tasks are typically done in-lab, it is conceivable that they could be run online, perhaps in-browser. HTML5 (javascript) seems to be a good way of doing this.
+So, let's play some Pong! Move the left paddle using the mouse! You need 3 games to win!
+</p>
+
+<p>
+_________________________________________________________________________________________________________________________________
+</p>
+
+<canvas id = "gameCanvas" width = "800" height ="600"></canvas>
+
+
+<script>
+
+// Global Variables
+var canvas;
+var canvasContext;
+var ballDim = 5
+var ballX = 50;
+var ballY = 50;
+var paddleLeftY = 100;
+var paddleRightY = 100;
+var ballSpeedX = 5;
+var ballSpeedY = 4;
+
+var playerLeftScore = 0;
+var playerRightScore = 0;
+const winningScore = 3;
+var showWinScreen = false;
+
+const padWidth = 10
+const padHeight = 100
+
+function calculateMousePos(evt){
+    var rect = canvas.getBoundingClientRect();
+    var root = document.documentElement;
+    var mouseX = evt.clientX - rect.left - root.scrollLeft;
+    var mouseY = evt.clientY - rect.top - root.scrollTop;
+    return{
+        x:mouseX,
+        y:mouseY
+    };
+}
+
+
+function handleMouseClick(evt){
+    if(showWinScreen){
+        playerLeftScore = 0;
+        playerRightScore = 0;
+        showWinScreen = false;
+    }
+}
+
+
+window.onload = function(){
+    canvas = document.getElementById('gameCanvas');
+    canvasContext = canvas.getContext('2d');
+    canvasContext.font="20px Monospace";
+    var framesPerSecond = 60; // local variable
+    setInterval(function(){moveEverything(); drawEverything();},1000/framesPerSecond);
+    
+    canvas.addEventListener('mousedown',handleMouseClick);
+        
+    canvas.addEventListener('mousemove',
+        function(evt){
+            var mousePos = calculateMousePos(evt);
+            paddleLeftY = mousePos.y;
+            });
+}
+
+
+function ballReset(){
+
+    if(playerLeftScore >= winningScore || playerRightScore >= winningScore){
+        showWinScreen = true;
+    }
+
+    ballSpeedX = -ballSpeedX
+    ballSpeedY = -ballSpeedY
+    ballX = canvas.width/2;
+    ballY = canvas.height/2;
+}
+
+
+
+function computerMovement(){
+    if(paddleRightY < ballY-35){
+        paddleRightY = paddleRightY + 6
+    } else if (paddleRightY > ballY+35) {
+        paddleRightY = paddleRightY - 6
+        }
+}
+
+
+function moveEverything(){
+
+    if(showWinScreen){
+        return;
+    }
+    
+    computerMovement();
+
+    ballX = ballX + ballSpeedX;
+    ballY = ballY + ballSpeedY;
+    
+    if (ballX+ballDim/2 > canvas.width) { 
+        if ( (ballY < paddleRightY+padHeight/2) && (ballY > paddleRightY-padHeight/2) ) {
+            ballSpeedX = -ballSpeedX
+            var deltaY = ballY - paddleRightY;
+            ballSpeedY = deltaY*0.25;
+            } else {
+                    playerLeftScore = playerLeftScore+1;
+                    ballReset();
+                    }
+    }
+    
+    if (ballX < 0) { 
+        if ( (ballY < paddleLeftY+padHeight/2) && (ballY > paddleLeftY-padHeight/2) ) {
+            ballSpeedX = -ballSpeedX
+            var deltaY = ballY - paddleLeftY;
+            ballSpeedY = deltaY*0.25;
+            } else {
+                    playerRightScore = playerRightScore+1;
+                    ballReset();
+                    }
+    }
+    
+    
+    if (ballY > canvas.height) { ballSpeedY = -ballSpeedY}
+    if (ballY < 0) { ballSpeedY = -ballSpeedY}
+    //console.log(ballX);
+}
+
+
+
+function drawEverything(){
+
+    colorRect(0,0,canvas.width,canvas.height,'black') //background
+    colorRect(0,paddleLeftY-padHeight/2,padWidth,padHeight,'gray'); //paddleLeft
+    colorRect(canvas.width-padWidth,paddleRightY-padHeight/2,padWidth,padHeight,'gray'); //paddleRight
+    drawNet()
+    colorBall(ballX,ballY,ballDim,'white'); //ball
+    
+    canvasContext.fillStyle = 'white';
+    canvasContext.fillText(playerLeftScore, 100, 100)
+    canvasContext.fillText(playerRightScore, 700, 100)
+    
+    if(showWinScreen){
+
+        if(playerLeftScore >= winningScore){
+            canvasContext.fillStyle = 'green';
+            canvasContext.fillText('You Won! Click to continue!', 270, 50)
+        }
+        
+        if(playerRightScore >= winningScore){
+            canvasContext.fillStyle = 'red';
+            canvasContext.fillText('You Lost! Click to continue!', 270, 50)
+        }
+        
+        return;
+    }
+
+
+}
+
+
+
+function colorRect(leftX,topY,width,height,drawColor){
+    canvasContext.fillStyle = drawColor;
+    canvasContext.fillRect(leftX,topY,width,height);
+}
+
+
+
+function colorBall(posX,posY,radius,drawColor){
+    canvasContext.fillStyle = drawColor;
+    canvasContext.beginPath();
+    canvasContext.arc(posX,posY,radius,0,Math.PI*2,true)
+    canvasContext.fill();
+}
+
+
+function drawNet(){
+    for(var i=0; i<canvas.height;i+=80){
+        colorRect(canvas.width/2-1,i,2,20,'gray')
+    }
+}
+
+</script>
+<p>
+_________________________________________________________________________________________________________________________________
+</p>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<STYLE> P { font-size: 1.2em } </STYLE>
+<body bgcolor="#000000" TEXT="#FFFFFF" LINK="#FFFF00" VLINK="#FFFF00">
+
+<h1>Binary, Parallel Ports and EEG</h1>
+
+<p> EEG machines sometimes use parallel cables to send event markers. These are useful to figure out when certain situations occur, e.g. when a stimulus is shown. When were doing building our  
+<a href="https://doi.org/10.1016/j.visres.2017.07.008">EEG experiment</a>, we needed to know how to interface between Python and the EEG hardware. </p>
+
+<figure>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Parallel_computer_printer_port.jpg/150px-Parallel_computer_printer_port.jpg" alt="parallel port">
+<figcaption>Image from Wikipedia. The female end of a parallel port. </figcaption>
+</figure>
+
+<p> Not knowing anything about how the cables work, we sought to splice an unused cable, only to find a bunch of cables in it. Images like these proved useful:</p>
+
+<figure>
+<img src="http://d4web.net/sths/TEJ/U04Interfacing/A02Input/images/pinout.gif" alt="parallel pins">
+<figcaption>Image from http://d4web.net. Note the 8 data pinouts (D0 - D7). </figcaption>
+</figure>
+
+<p> With one end of the cable connected to a PC running python, we could use the parallel module (which in this case was already included in the Psychopy library, which we use to draw gratings). This enabled us to activate/deactivate the pins. E.g.: </p>
+
+<pre><code>
+	from psychopy import parallel
+	parallel.setPortAddress(address='/dev/parport0')
+	x = 1
+	parallel.setData(x)
+</code></pre>
+
+<p> But what was that actually doing? To the other end of the cable (the one that we spliced), we connected a multimeter. Turns out, when 'x' was set to '1', there was voltage across D0 and ground. When x was set to '2', D1 was active. But when x was set to 3, D0 and D1 were active, but D2 was not!</p>
+
+<p></p>
+
+<p> But the parallel.setData() function and the EEG event markers both support integer inputs from 0 to 255. If each of the eight data pins could only be on or off, there are 2^8 possible pin states, for a total of 256. Hey, it's just binary! If that's true then we can control each pin by having 'x' be a 8-bit binary string, and just converting that to a base 2 integer. So to have only D7 and D1 active:</p>
+
+<pre><code>
+	x = '10000010' # activate only 2 of the 8 pins
+	parallel.setData(int(x,2)) # use the parallel function on the base 2 integer of x
+</code></pre>
+
+
+<p> And that worked! And the numbers matched the EEG markers!</p>
+<p> </p>
+
+<p>Sure, this seemed like an unnecessary exercise to splice the cable, given that we could have just read the  to read about what the function does. But a bit of hands-on knowledge is a good thing, and the concept here is practically the same for using GPIO found on things like the <a href="https://sourceforge.net/p/raspberry-gpio-python/wiki/BasicUsage/"> Raspberry Pi</a>. Maybe it's possible to run an EEG study/ interface with the machine from a single Raspberry Pi? <a href="http://syaheed.tech:3838/apps/raspPi/raspPi.html"> (assuming it is good enough to display stimuli correctly).</a> Maybe patch the GPIO back to a parallel cable?
+
+<figure>
+<img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/4/2/4/header_pinout.jpg" alt="GPIO pins">
+<figcaption>Image from https://learn.sparkfun.com. </figcaption>
+</figure>
+
+
+
+</p>
+
