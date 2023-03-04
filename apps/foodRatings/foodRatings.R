@@ -5,7 +5,7 @@ graphics.off()
 
 # Boilerplate stuff
 rm(list = ls()) ; graphics.off()
-library(rworldmap); library(priceR); library("stringdist")
+library(rworldmap); library(priceR); library(stringdist)
 path = 'C:/Users/syahe/OneDrive/Desktop/zomatoData/' ; setwd(path)
 
 # load data
