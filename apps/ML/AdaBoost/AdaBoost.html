@@ -4,8 +4,6 @@
 <body bgcolor="#000000" TEXT="#FFFFFF" LINK="#FFFF00" VLINK="#FFFF00">
 
 <h1>How many estimators does AdaBoost need for a proper regression?</h1>
-  
-<p>*** This is work in progress *** Next step is to compare the fit to other types of models (or fourier decomposition?)</p><br>
 
 <p><a href="https://scikit-learn.org/stable/auto_examples/ensemble/plot_adaboost_regression.html#sphx-glr-auto-examples-ensemble-plot-adaboost-regression-p">The sciki-learn website</a> has an example of how AdaBoost affects the estimate over a decision tree, for a sinusoidal function. The example uses 300 estimators, but is that enough? How much is enough?</p><br>
 <p>Really, what we want to know is how the fit changes as the number of boosts increases. For that, let's take a look at the loss function across number of boosts (green line is the base decision tree model, red line uses 600 estimators/boosts): </p>
@@ -15,5 +13,5 @@
 </figure>
 
 <br><p>For this case, looks like the indicated 300 boosts is sufficient. The loss (sum of square errors) function flattens out before that.</p>
-<br><p>Clearly boosting the decision tree has a beneficial effect on the fit of the model. But how does this compare to other methods? How does the model perform on witheld data?</p>  
+<br><p>Clearly boosting the decision tree has a beneficial effect on the fit of the model, but it also is not perfectly predicting the sinusoidal pattern</p>  
 <br><p><a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/ML/AdaBoost/AdaBoost.py">Python/Scikit-Learn code</a> used (modified from the official example).</p>
