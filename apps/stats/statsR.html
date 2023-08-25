@@ -7,14 +7,29 @@
 <br>
 
 <p>What stats are appropriate for comparing paired data?</p>
+<br>
+
+<p>We can first start by thinking about 2 cases.</p>
+<p>1) where a set of numbers (say 30) is pulled from the same normal distribution</p>
+<p>2) where a set of numbers (say 30) is pulled from the a different normal distribution</p>  
+<br>
+
+<p>Logically, the two cases should give you different statistics. In case 2, the sets should be significantly different.</p>
+<p>But is that the only thing we need to look out for?</p>
+<p>Clearly no. We can look at effect size, the power of the test, what Bayesian tests say about the data, etc.</p>
+<p>Consider the output from this <a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/stats/stats_paired.R">custom code</a></p>   
+<br>
 
 <figure>
   <img src="./pairedTest.jpg" height="100" width="1600">
   <figcaption> <p> Note that the standard error calculated here is not the within-subjects one. To calculate that, see the page on <a href="../dataVis/dataVis.html">data visualizations</a>.</p></figcaption>
 </figure>
 <br>
-  
-<p><a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/stats/stats_paired.R">Here</a> is the R code used.</p> 
+
+<p>Potentially important information might be: </p>
+<p>1) How many in set B is increased/decreased from its pair in set A. This tells you if the effect is driven by just a few cases or majority of cases. </p>
+<p>2) What the actual group means, standard deviation and standard error are. See the note in the above figure caption though.</p>
+
 <p>This is part of a <a href="https://github.com/syaheed/public-code/blob/master/customRfunctions.R">larger set of custom R code</a> I am compiling so I can import my code using <a href="https://rdrr.io/r/base/source.html">source</a> technique.</p>
 
 <br><br>
