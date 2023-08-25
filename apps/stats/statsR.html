@@ -7,29 +7,18 @@
 
 <br>
 
-<p> Different types of data requires or enables different kinds of visualizations.</p>
-
-<br>
-
-<p> Take for example the "iris" dataset that is a standard part of R/Python data analysis examples. Each flower's specific attribute (it's sepal length/width is only listed once).</p>
-<p> Here are somewhat standard ways to visualise the data: </p>
+<p> What stats are appropriate for comparing paired data?</p>
 
 <figure>
-  <img src="./vis_independ.jpg" height="600" width="600">
-  <figcaption> <p><a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/dataVis/vis_independ.R">Here</a> is the R code used.</p></figcaption>
+  <img src="./pairedTest.jpg" height="100" width="800">
+  <figcaption> <p> Note that the standard error calculated here is not the within-subjects one. To calculate that, see the page on <a href="../dataVis/dataVis.html">data visualizations</a>.</p></figcaption>
 </figure>
+  
+<p><a href="./stats_paired.R">Here</a> is the R code used.</p> 
+<p>This is part of a <a href="https://github.com/syaheed/public-code/blob/master/customRfunctions.R">larger set of custom R code</a> I am compiling so I can import my code using <a href="https://rdrr.io/r/base/source.html">source</a> technique.</p>
+
+
 
 <br><br>
   
-<p> But what if there are multiple measurements across time, and we are interested more in difference across time than differences across species? </p>
-<p> Taking the "iris" dataset again, we can simulate the sepal lengths at time 2 and 3 assuming there is some growth rate (e.g. 10% for one species, 20% and 30% for the others)</p>
-<p> Here are somewhat standard ways to visualise that data now: </p>
 
-<figure>
-  <img src="./vis_depend.jpg" height="800" width="600">
-  <figcaption> <p><a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/dataVis/vis_depend.R">Here</a> is the R code used.</p></figcaption>
-</figure>
-
-<br><br>
-  
-<p> Note that for the above visualizations, the errorbars should reflect within-subject/repeated-measures errors. Here we used the method suggested by <a href="https://doi.org/10.3758/s13428-013-0441-z">Cousineau</a>. </p>
