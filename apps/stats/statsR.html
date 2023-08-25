@@ -29,8 +29,13 @@
 <p>Potentially important information might be: </p>
 <p>1) How many in set B is increased/decreased from its pair in set A. This tells you if the effect is driven by just a few cases or majority of cases. </p>
 <p>2) What the actual group means, standard deviation and standard error are. See the note in the above figure caption though.</p>
+<p>3) What the t-statistic and p-values are, assuming a standard paired t-test.</p>
+<p>4) How the results would be different if using a non-parametric test (one that does not assume normally distributed data* for example, Welch tests). One could also do normality tests like the KS test normality or Anderson-Darling test</p>
+<p>5) What is the effect size? Cohen's D is a pretty standard measure, but one might also want to use Hedges G in some instances (e.g., when sample sizes are below 20).</p>
+<p>6) What is the effect size? Cohen's D is a pretty standard measure, but one might also want to use Hedges G in some instances (e.g., when sample sizes are below 20).</p>
 
 <p>This is part of a <a href="https://github.com/syaheed/public-code/blob/master/customRfunctions.R">larger set of custom R code</a> I am compiling so I can import my code using <a href="https://rdrr.io/r/base/source.html">source</a> technique.</p>
+<p>*For paired-tests, what is important is whether or no the DIFFERENCES between pairs are normally-distributed. Each of the datasets themselves need not be normally distributed and yet a normal t-test would still be appropriate.</p>
 
 <br><br>
   
