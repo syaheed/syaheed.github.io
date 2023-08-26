@@ -6,13 +6,19 @@
 <h1>On animations as data visualizations</h1>
   
 <p> In one of my <a href="https://doi.org/10.1016/j.visres.2017.07.008">research papers</a><a href="https://syaheed.github.io/publications/JabarFilipowiczAnderson2017a.pdf"> (pdf)</a>, we used EEG to look at early visual processing in the brain. </p>
-<p> In EEG experiments you get figures like this. They don't really tell you much about topography.</p>
+<p> In EEG experiments you get figures like this. Unless you are very familiar with evoked potentials, they don't really tell you much about topography. But they tell you what is happening across time.</p>
 <figure>
   <img src="./fig3.jpg">
 </figure>
+<br>
 
-<p> In EEG experiments you get figures like this. They don't really tell you much about topography.</p>
-  
+<p>Using animations though, we plot the topography at each timepoint as a frame, and export a video.</p>
 <video width="640" height="480" controls="controls">
 <source src="./Scalp.mp4" type="video/mp4">
 </video>
+<br>
+  
+<p>Now we can scroll through the timeline and see where activity is seen on the scalp, depending on where in the visual field the stimulus was shown.</p>
+<br>
+  
+<p>Code used to generate each frame in the video only required a minor modification to EEGLAB's (MATLAB)  pop_topoplot() function and some creative use of MATLAB's plotting functions. Note that this was done in 2016, things may have changed then.</p>
