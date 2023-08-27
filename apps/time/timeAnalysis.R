@@ -86,6 +86,4 @@ par(mar=c(5,5,5,1)) # adjust as needed
 barplot(emat$n,names.arg = emat$week, cex.lab=1.2, cex.axis=1, ylab = 'Count', xlab = 'Week', col.lab = "white" , col.axis = "white", col = "royalblue")
 
 corMap(wmat)
-
-
 savePlot(filename = 'time.jpg', "jpeg", device = dev.cur())
