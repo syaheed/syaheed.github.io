@@ -1,11 +1,9 @@
 rm(list = ls())
-setwd("C:/Users/syahe/OneDrive/Desktop/timeAnalysis/")
 
 library(dplyr)
 set.seed(123)
 seconds_per_day = 60*60*24
 seconds_per_week = seconds_per_day*7
-
 
 # create a dataset  
 start = as.numeric(as.POSIXct("2023-07-02 00:00:00"))
