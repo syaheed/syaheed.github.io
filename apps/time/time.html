@@ -5,13 +5,19 @@
 
 <h1>Timestamp Analysis</h1>
   
-<p> R, Python and Matlab all have POSIX fuctions that can be used to reformat dates and times. In it's integer for, they represent seconds from January 1, 1970. E.g., using as.POSIXct(1690000000) will return "2023-07-22 12:26:40" in R.</p>
-<p> In EEG experiments you get figures like this. Unless you are very familiar with evoked potentials, they don't really tell you much about topography. But they tell you what is happening across time.</p>
+<p>R, Python and Matlab all have POSIX fuctions that can be used to reformat dates and times. In it's integer for, they represent seconds from January 1, 1970. E.g., using as.POSIXct(1690000000) will return "2023-07-22 12:26:40" in R.</p>
+<p>Let's pretend we have timestamps for an action or app use. What kind of analyses could we run on it? What data visualizations might be useful to spot trends? Maybe:</p>
+<p>1)Amount of entries per day as a line plot?</p>
+<p>2)Bar plot of sum per week?</p>
+<p>3)Heatmap of hours vs. days of the week?</p>
+
+<br>
+<p>Why not all of that? Why not build a "dashboard" that tells us all sorts of information?</p>  
 <figure>
   <img src="./fig3.jpg">
 </figure>
 <br>
 
   
-<p>Now we can scroll through the timeline and see where activity is seen on the scalp, depending on where in the visual field the stimulus was shown.</p>
+<p>Of course, there is much more that can be done. </p>
 
