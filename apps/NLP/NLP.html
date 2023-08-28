@@ -22,9 +22,19 @@
 </figure>
 <br>
 
-<p>How about we apply this to look at vocab usage in the New York Post? Can we look at change in vocabulary over the past few years?</p>  
+<p>How about we apply this to look at vocab usage in the New York Post? Can we look at differences in word-make up across articles of differing topics?</p>  
 
-<p>We can try to use the data availivle on <a href="https://www.kaggle.com/datasets/nzalake52/new-york-times-articles">kaggle provided by nzalake52</a>.</p>
+<p>We can try to use the data available on <a href="https://www.kaggle.com/datasets/nzalake52/new-york-times-articles">kaggle provided by nzalake52</a>.</p>
+<p>A <a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/NLP/NLP.R">custom script</a> was used to do the data scraping from the above kaggle text file.</p>
+<br>
+
+<p>I calculated the number of words per article, number of unique words per article (minus stopwords), and also the median and minimum word prevalances in each article.</p>
+<p>I then calculated the average across each topic.</p>
+  
+<figure>
+  <img src="./NLP.jpg">
+</figure>
 <br>
   
-<p>To be updated soon!</p>  
+<p>Looks like there is some variation in word length, and work prevalence depending on the topic.</p>
+<p>Of course, some topics are more jargon-y then others, so it should not be so surprising that there would be variation</p>
