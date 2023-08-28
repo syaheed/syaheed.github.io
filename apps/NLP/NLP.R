@@ -79,11 +79,13 @@ agg_tbl = d %>% group_by(topic) %>%
             .groups = 'drop')
 
 # plots
-x11(display = "", width = 12, height = 12); par(mfrow = c(3, 2))
+x11(display = "", width = 100, height = 100); 
+par(mfrow = c(3, 2))
 par(mar = c(7, 5, 5, 5)); barplot(agg_tbl$ncount, main = "Article Count", xlab = "", ylab = "Count", names.arg = agg_tbl$topic,las=2)
 par(mar = c(7, 5, 5, 5)); barplot(agg_tbl$m_wordlength, main = "Avg Wordlength", xlab = "", ylab = "Words", names.arg = agg_tbl$topic,las=2, ylim=c(200,650),xpd=FALSE)
 par(mar = c(7, 5, 5, 5)); barplot(agg_tbl$m_uTokens, main = "Avg Unique Words", xlab = "", ylab = "Words", names.arg = agg_tbl$topic,las=2, ylim=c(60,170),xpd=FALSE)
 par(mar = c(7, 5, 5, 5)); barplot(agg_tbl$m_uDens, main = "Proportion Unique Words", xlab = "", ylab = "Proportion", names.arg = agg_tbl$topic,las=2, ylim=c(0.28,0.38),xpd=FALSE)
 par(mar = c(7, 5, 5, 5)); barplot(agg_tbl$m_prevMedian, main = "Median Word Prevalence", xlab = "", ylab = "Prevalence", names.arg = agg_tbl$topic,las=2, ylim=c(2.34,2.38),xpd=FALSE)
 par(mar = c(7, 5, 5, 5)); barplot(agg_tbl$m_prevMin, main = "Min Word Prevalence", xlab = "", ylab = "Prevalence", names.arg = agg_tbl$topic,las=2, ylim=c(-0.7,0.7),xpd=FALSE)
-savePlot(filename = 'NLP.jpg', "jpeg", device = dev.cur())
+dev.off()
+
