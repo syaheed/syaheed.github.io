@@ -1,26 +1,133 @@
 <!DOCTYPE html>
 <html>
-<STYLE> P { font-size: 1.2em } </STYLE>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<STYLE> P { font-size: 1.2em }
+.collapsible {
+  background-color: #383838;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: 2px solid black;
+  font-size: 15px;
+}
+
+.active, .collapsible:hover {
+  background-color: #5a5a5a;
+}
+
+.collapsible:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2212";
+}
+
+
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #5a5a5a;
+}
+</style>
+</head>
 <body bgcolor="#000000" TEXT="#FFFFFF" LINK="#FFFF00" VLINK="#FFFF00" style="width: 1000px">
 
-<p> If there are any issues with accessing the links below, do contact me at <a href="mailto:syaheed@gmail.com">syaheed@gmail.com</a>.</p>
+<h1>Publications / Conferences</h1>
+<p> Click on any research title to show the abstract. PDF links and links to the article in the journal (DOI) are given below the abstract. If there are any issues with accessing the links below, do contact me at <a href="mailto:syaheed@gmail.com">syaheed@gmail.com</a>.</p>
 <p> ____________________  </p>
-   
-<br>
    
 <h2>Research Papers</h2>
-<p>Jabar, S. B., and Fougnie, D. (2022). Perception is rich and probabilistic. Scientific reports, 12(1), 1-7. <a href="https://doi.org/10.1038/s41598-022-17458-8">DOI</a> </a> <a href="publications/JabarFougnie2022b.pdf">pdf</a></p>
-<p>Jabar, S. B., Sreenivasan, K. K., Lentzou, S., Kanabar, A., Brady, T. F., & Fougnie, D. Using a betting game to reveal the rich nature of visual working memories. Under review. <a href="https://doi.org/10.1101/2020.10.28.357442">Pre-print</a></p>
-<p>Jabar, S. B., and Fougnie, D. (2022)  How do expectations change behavior? Investigating the contributions at encoding versus decision-making. Journal of Experimental Psychology: Learning, Memory, and Cognition, 48, 226–241. <a href="https://doi.org/10.1037/xlm0001055">DOI</a> <a href="publications/JabarFougnie2022a.pdf">pdf</a></p>
-<p>Hon, N. & Jabar, S. B. (2018). Learning in the target prevalence effect. Perception. <a href="https://doi.org/10.1177/0301006618773081">DOI</a> <a href="publications/HonJabar2018.pdf">pdf</a></p> 
-<p>Jabar, S. B., Filipowicz, A. and Anderson, B. (2017). Knowing where is different from knowing what. Distinct response time profiles and accuracy effects for target location, orientation, and color probability. Attention, Perception, & Psychophysics.  <a href="https://doi.org/10.3758/s13414-017-1412-8">DOI</a> <a href="publications/JabarFilipowiczAnderson2017b.pdf">pdf</a></p> 
-<p>Jabar, S. B., Filipowicz, A. and Anderson, B. (2017). Tuned by Experience: How Orientation Probability Modulates Early Perceptual Processing. Vision Research, 138, 86-96. <a href="https://doi.org/10.1016/j.visres.2017.07.008">DOI</a> <a href="publications/JabarFilipowiczAnderson2017a.pdf">pdf</a></p> 
-<p>Jabar, S. B., and Anderson, B. (2017) Not all probabilities are equivalent: Evidence from orientation versus spatial probability learning. Journal of Experimental Psychology: Human Perception and Performance, 42, 853-867. <a href="http://dx.doi.org/10.1037/xhp0000354">DOI</a> <a href="publications/JabarAnderson2017b.pdf">pdf</a></p> 
-<p>Jabar, S. B., & Anderson, B. (2017). Orientation probability and spatial exogenous cuing improve perceptual precision and response speed by different mechanisms. Frontiers in Psychology, 8:183. <a href="https://doi.org/10.3389/fpsyg.2017.00183">DOI</a> <a href="publications/JabarAnderson2017a.pdf">pdf</a></p> 
-<p>Jabar, S. B., & Anderson, B. (2015). Probability shapes perceptual precision: A study in orientation estimation. Journal of Experimental Psychology: Human Perception and Performance, 41, 1666-1679.  <a href="https://doi.org/10.1037/xhp0000121">DOI</a> <a href="publications/JabarAnderson2015.pdf">pdf</a></p> 
-<p>Hon, N., Yap, M. J., & Jabar, S. B. (2013). The trajectory of the target probability effect. Attention, Perception, & Psychophysics, 75(4), 661-666.  <a href="https://link.springer.com/article/10.3758/s13414-013-0429-x">DOI</a> <a href="publications/HonYapJabar2013.pdf">pdf</a></p> 
-<p> ____________________  </p>
 
+<button class="collapsible">Jabar, S. B., and Fougnie, D. (2022). Perception is rich and probabilistic. Scientific reports, 12(1), 1-7. </button>
+<div class="content">
+<p>When we see a stimulus, e.g. a star-shaped object, our intuition is that we should perceive a single, coherent percept (even if it is inaccurate). But the neural processes that support perception are complex and probabilistic. Simple lines cause orientation-selective neurons across a population to fire in a probabilistic-like manner. Does probabilistic neural firing lead to non-probabilistic perception, or are the representations behind perception richer and more complex than intuition would suggest? To test this, we briefly presented a complex shape and had participants report the correct shape from a set of options. Rather than reporting a single value, we used a paradigm designed to encourage to directly report a representation over shape space—participants placed a series of Gaussian bets. We found that participants could report more than point-estimates of shape. The spread of responses was correlated with accuracy, suggesting that participants can convey a notion of relative imprecision. Critically, as participants placed more bets, the mean of responses show increased precision. The later bets were systematically biased towards the target rather than haphazardly placed around bet 1. These findings strongly indicate that participants were aware of more than just a point-estimate; Perceptual representations are rich and likely probabilistic.</p>
+<a href="https://doi.org/10.1038/s41598-022-17458-8">DOI</a> 
+<a href="publications/JabarFougnie2022b.pdf">pdf</a>
+</div>  
+  
+  
+<button class="collapsible">Jabar, S. B., Sreenivasan, K. K., Lentzou, S., Kanabar, A., Brady, T. F., & Fougnie, D. Using a betting game to reveal the rich nature of visual working memories. Under review.</button>
+<div class="content">
+<p>When we ask people to hold a color in working memory, what do they store? Do they remember colors as point estimates (e.g. a particular shade of red) or are memory representations richer, such as uncertainty distributions over feature space? We developed a novel paradigm (a betting game) to measure the nature of working memory representations. Participants were shown a set of colored circles and, after a brief memory delay, asked about one of the objects. Rather than reporting a single color, participants placed multiple bets to create distributions in color space. The dispersion of bets was correlated with performance, indicating that participants’ internal uncertainty guided bet placement. Furthermore, relative to the first response, memory performance improved when averaging across multiple bets, showing that memories contain more information than can be conveyed in a single response. Finally, information about the item in memory was present in subsequent responses even when the first response would generally be classified as a guess or report of an incorrect item, suggesting that such failures are not all-or-none. Thus, memory representations are more than noisy point estimates; they are surprisingly rich and probabilistic.</p>
+<a href="https://doi.org/10.1101/2020.10.28.357442">Pre-print</a>
+</div>
+
+
+<button class="collapsible">Jabar, S. B., and Fougnie, D. (2022)  How do expectations change behavior? Investigating the contributions at encoding versus decision-making. Journal of Experimental Psychology: Learning, Memory, and Cognition, 48, 226–241.</button>
+<div class="content">
+<p>Expectations about the environment play a large role in shaping behavior, but how does this occur? Do expectations change the way we perceive the world, or just our decisions based on unbiased perceptions? We investigated the relative contributions of priors to these 2 stages by manipulating when information about expected color was provided. We compared cases where the prior could affect encoding into perceptual/working memory representations (e.g., when provided prestimulus) against cases where it could not (e.g., when given at response after a delay). Although priors had a minor influence on encoding, the bulk of the effects were at decision-making. Furthermore, these effects appeared to be distinct. The effect on decision-making was Bayesian-like, with priors inducing bias while improving precision. In contrast, the same priors at encoding improved precision without causing changes in bias. Priors do not just affect encoding or decision-making, but appear to affect both, via distinct mechanisms.</p>
+<a href="https://doi.org/10.1037/xlm0001055">DOI</a>
+<a href="publications/JabarFougnie2022a.pdf">pdf</a>
+</div>
+
+
+<button class="collapsible">Hon, N. & Jabar, S. B. (2018). Learning in the target prevalence effect. Perception, 47. </button>
+<div class="content">
+<p>Rare or low prevalence targets are detected less well than counterparts that occur with higher probability. It stands to reason, though, that before such a deficit is apparent, information about a given target’s probability of occurrence must be apprehended. In this study, we investigated how much target experience is necessary for target probabilities to be fully acquired and established within mental task representations. A central finding was that different target probability values required approximately the same amount of target sampling to learn. This was true whether learning about target probabilities from a naive start-point (Experiment 1) or when recalibrating from one probability value to another (Experiment 2). We discuss these findings in relation to how mental task representations are modified when new task-relevant information is received and the attentional consequences of such changes.</p>
+<a href="https://doi.org/10.1177/0301006618773081">DOI</a>
+<a href="publications/HonJabar2018.pdf">pdf</a>
+</div>
+
+
+<button class="collapsible">Jabar, S. B., Filipowicz, A. and Anderson, B. (2017). Knowing where is different from knowing what. Distinct response time profiles and accuracy effects for target location, orientation, and color probability. Attention, Perception, & Psychophysics.</button>
+<div class="content">
+<p>When a location is cued, targets appearing at that location are detected more quickly. When a target feature is cued, targets bearing that feature are detected more quickly. These attentional cueing effects are only superficially similar. More detailed analyses find distinct temporal and accuracy profiles for the two different types of cues. This pattern parallels work with probability manipulations, where both feature and spatial probability are known to affect detection accuracy and reaction times. However, little has been done by way of comparing these effects. Are probability manipulations on space and features distinct? In a series of five experiments, we systematically varied spatial probability and feature probability along two dimensions (orientation or color). In addition, we decomposed response times into initiation and movement components. Targets appearing at the probable location were reported more quickly and more accurately regardless of whether the report was based on orientation or color. On the other hand, when either color probability or orientation probability was manipulated, response time and accuracy improvements were specific for that probable feature dimension. Decomposition of the response time benefits demonstrated that spatial probability only affected initiation times, whereas manipulations of feature probability affected both initiation and movement times. As detection was made more difficult, the two effects further diverged, with spatial probability disproportionally affecting initiation times and feature probability disproportionately affecting accuracy. In conclusion, all manipulations of probability, whether spatial or featural, affect detection. However, only feature probability affects perceptual precision, and precision effects are specific to the probable attribute.</p>
+<a href="https://doi.org/10.3758/s13414-017-1412-8">DOI</a>
+<a href="publications/JabarFilipowiczAnderson2017b.pdf">pdf</a>
+</div>
+
+
+<button class="collapsible">Jabar, S. B., Filipowicz, A. and Anderson, B. (2017). Tuned by Experience: How Orientation Probability Modulates Early Perceptual Processing. Vision Research, 138, 86-96.</button>
+<div class="content">
+<p>Probable stimuli are more often and more quickly detected. While stimulus probability is known to affect decision-making, it can also be explained as a perceptual phenomenon. Using spatial gratings, we have previously shown that probable orientations are also more precisely estimated, even while participants remained naive to the manipulation. We conducted an electrophysiological study to investigate the effect that probability has on perception and visual-evoked potentials. In line with previous studies on oddballs and stimulus prevalence, low-probability orientations were associated with a greater late positive ‘P300’ component which might be related to either surprise or decision-making. However, the early ‘C1’ component, thought to reflect V1 processing, was dampened for high-probability orientations while later P1 and N1 components were unaffected. Exploratory analyses revealed a participant-level correlation between C1 and P300 amplitudes, suggesting a link between perceptual processing and decision-making. We discuss how these probability effects could be indicative of sharpening of neurons preferring the probable orientations, due either to perceptual learning, or to feature-based attention.</p>
+<a href="https://doi.org/10.1016/j.visres.2017.07.008">DOI</a> 
+<a href="publications/JabarFilipowiczAnderson2017a.pdf">pdf</a>
+</div>
+
+
+<button class="collapsible">Jabar, S. B., and Anderson, B. (2017) Not all probabilities are equivalent: Evidence from orientation versus spatial probability learning. Journal of Experimental Psychology: Human Perception and Performance, 42, 853-867.</button>
+<div class="content">
+<p>Frequently targets are detected faster, probable locations searched earlier, and likely orientations estimated more precisely. Are these all consequences of a single, domain-general “attentional” effect? To examine this issue, participants were shown brief instances of spatial gratings, and were tasked to draw their location and orientation. Unknown to participants, either the location or orientation probability of these gratings were manipulated. While orientation probability affected the precision of orientation reports, spatial probability did not. Further, utilising lowered stimulus contrast (via a staircase procedure) and a combination of behavioral precision and confidence self-report, we clustered trials with perceived stimuli from trials where the target was not detected: Spatial probability only modulated the likelihood of stimulus detection, but not did not modulate perceptual precision. Even when no physical attentional cues are present, acquired probabilistic information on space versus orientation leads to separable ‘attention-like’ effects on behaviour. We discuss how this could be linked to distinct underlying neural mechanisms. </p>
+<a href="http://dx.doi.org/10.1037/xhp0000354">DOI</a> 
+<a href="publications/JabarAnderson2017b.pdf">pdf</a>
+</div>
+
+
+<button class="collapsible">Jabar, S. B., & Anderson, B. (2017). Orientation probability and spatial exogenous cuing improve perceptual precision and response speed by different mechanisms. Frontiers in Psychology, 8:183.</button>
+<div class="content">
+<p>We are faster and more accurate at detecting frequently occurring objects than infrequent ones, just as we are faster and more accurate at detecting objects that have been spatially cued. Does this behavioral similarity reflect similar processes? To evaluate this question we manipulated orientation probability and exogenous spatial cuing within a single perceptual estimation task. Both increased target probability and spatial cuing led to shorter response initiation times and more precise perceptual reports, but these effects were additive. Further, target probability changed the shape of the distribution of errors while spatial cuing did not. Different routes and independent mechanisms could lead to changes in behavioral measures that look similar to each other and to ‘attentional’ effects.</p>
+<a href="https://doi.org/10.3389/fpsyg.2017.00183">DOI</a> 
+<a href="publications/JabarAnderson2017a.pdf">pdf</a>
+</div>
+
+
+<button class="collapsible">Jabar, S. B., & Anderson, B. (2015). Probability shapes perceptual precision: A study in orientation estimation. Journal of Experimental Psychology: Human Perception and Performance, 41, 1666-1679.  </button>
+<div class="content">
+<p>Probability is known to affect perceptual estimations, but an understanding of mechanisms is lacking. Moving beyond binary classification tasks, we had naive participants report the orientation of briefly viewed gratings where we systematically manipulated contingent probability. Participants rapidly developed faster and more precise estimations for high-probability tilts. The shapes of their error distributions, as indexed by a kurtosis measure, also showed a distortion from Gaussian. This kurtosis metric was robust, capturing probability effects that were graded, contextual, and varying as a function of stimulus orientation. Our data can be understood as a probability-induced reduction in the variability or “shape” of estimation errors, as would be expected if probability affects the perceptual representations. As probability manipulations are an implicit component of many endogenous cuing paradigms, changes at the perceptual level could account for changes in performance that might have traditionally been ascribed to “attention.”</p>
+<a href="https://doi.org/10.1037/xhp0000121">DOI</a>
+<a href="publications/JabarAnderson2015.pdf">pdf</a>
+</div>
+
+
+<button class="collapsible">Hon, N., Yap, M. J., & Jabar, S. B. (2013). The trajectory of the target probability effect. Attention, Perception, & Psychophysics, 75(4), 661-666.</button>
+<div class="content">
+<p>The effect of target probability on detection times is well-established: Even when detection accuracy is high, lower probability targets are detected more slowly than higher probability ones. Although this target probability effect on detection times has been well-studied, one aspect of it has remained largely unexamined: How the effect develops over the span of an experiment. Here, we investigated this issue with two detection experiments that assessed different target probability ratios. Conventional block segment analysis and linear mixed-effects modeling converged on two key findings. First, we found that the magnitude of the target probability effect increases as one progresses through a block of trials. Second, we found, by examining the trajectories of the low- and high-probability targets, that this increase in effect magnitude was driven by the low-probability targets. Specifically, we found that low-probability targets were detected more slowly as a block of trials progressed. Performance to high-probability targets, on the other hand, was largely invariant across the block. The latter finding is of particular interest because it cannot be reconciled with accounts that propose that the target probability effect is driven by the high-probability targets.</p>
+<a href="https://link.springer.com/article/10.3758/s13414-013-0429-x">DOI</a>
+<a href="publications/HonYapJabar2013.pdf">pdf</a>
+</div>
+
+<p> ____________________  </p>
 <br>
    
 <h2>International Conferences</h2>
@@ -39,8 +146,8 @@
 <p>Jabar, S. B., and Anderson, Britt. Modelling Probability Effects as Differences in Neuron Tuning. Poster at: Canadian Society for Brain and Behavioral Sciences, 2014. Toronto, Canada.</p> 
 <p>Jabar, S. B., and Anderson, Britt. Probability cues enhance perceptual estimations. Poster at: Vision Sciences Society, 2014. Florida, USA.</p>
 <p>Hon, N, & Jabar, S. B. Learning about rare targets. Poster at the 54th Annual Meeting of The Psychonomic Society, November 15th 2013, Toronto, Canada.</p>
-<p> ____________________  </p>
 
+<p> ____________________  </p>
 <br>
    
 <h2>Reviewing Experience</h2>
@@ -48,6 +155,26 @@
 <p>Vision (2018/2019) <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6802766/"> pdf</a></p>
 <p>Information (2019) <a href="https://www.mdpi.com/2078-2489/11/1/50"> pdf</a></p>
 <p>Cognitive Science Society (2020) <a href="https://cognitivesciencesociety.org/cogsci20/reviewers.html"> pdf</a></p>
-<p> ____________________  </p>
 
+<p> ____________________  </p>
 <br>
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    } 
+  });
+}
+</script>
+
+</body>
+</html>
