@@ -22,6 +22,11 @@
 <p>Unlike a normal 2d platfomrer, the game screen was static. I asked for a scrolling level, which it got right on the first try!</p>
 <p>There are stil many things to add, like enemies, the level endpoint and maybe some items, and maybe we can revisit this later.</p>
 <p>The code for the mariolike can be found <a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/mariolike/mariolike.py">here</a>.</p>
+<p>Addendum: So I asked it to implement a scrolling screen, checkpoints and levels. This is when everything starts to go haywire.</p>
+<p>The shifting world made the calculations go berserk, and although it was easy for me to fix the issue manually, ChatGPT could not fix it.</p>
+<p>Even after about 30 prompts and collaborating to debug the progam by printing x-coordinates (my idea), the solutions seem to get worse and worse.</p>
+<p>One take away I think is to focus on more modular code, where each function cannot interact with another except in very specific ways.</p>
+  
 <br>
 
 <br>
