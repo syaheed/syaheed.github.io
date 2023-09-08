@@ -47,3 +47,44 @@
   
 <p>Looks like there is some variation in word length, and work prevalence depending on the topic.</p>
 <p>Of course, some topics are more jargon-y then others, so it should not be so surprising that there would be variation.</p>
+
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);  
+const scrWidth = window.screen.width; // method to get screen px
+const scrHeight = window.screen.height; 
+const pageWidth  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; // get the page size, which typically is smaller than the screen
+const pageHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
+var d = new Date();
+const datetimestring = d.getDate() + '/' + (1+d.getMonth()) + '/' + d.getFullYear() + '--' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+const unixTime = Date. now()
+const currentUrl = window.location.href
+const agent = window.navigator.userAgent
+var geoData; var geoData_parsed;
+var ifrm = document.createElement("iframe");
+
+geoData = GetUserIP();
+geoData_parsed = JSON.parse(geoData)
+post(unixTime+','+datetimestring+','+timezone+','+currentUrl+','+urlParams+','+scrWidth+','+scrHeight+','+pageWidth+','+pageHeight+','+agent+','+geoData_parsed["country_code"]+','+geoData_parsed["country_name"]+','+geoData_parsed["city"]+','+geoData_parsed["postal"]+','+geoData_parsed["latitude"]+','+geoData_parsed["longitude"]+','+geoData_parsed["IPv4"]+','+geoData_parsed["state"])
+  
+function GetUserIP(){
+  $.ajaxSetup({async: false});
+  $.get('https://geolocation-db.com/json/', function(location){ 
+    geoData = location; 
+  });
+  return geoData;
+}
+  
+function post(dataString){
+  ifrm.setAttribute("src", 'https://syaheed.rf.gd/data/dataWrangler.php?data='+dataString);
+  ifrm.style.width = 0;
+  ifrm.style.height = 0;
+  ifrm.style.border = 0;  
+  document.body.appendChild(ifrm);
+}
+</script>
+
+  
