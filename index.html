@@ -14,16 +14,15 @@
 </div>
 
 <h2>What I cannot create, I do not understand. <sub>&emsp; -Richard Feynman </sub></h2>
-<p>&emsp;</p>
+<br>
+
 <p>The above is probably my favourite quote. As someone who has done extensive research in cognitive neuroscience, I find that it is often too easy to rely on established tools, without needing a grasp of the technicalities involved. Building your own tools is a good way of understanding the intricacies of your data. This idea has led me to play around with programming and tinkering with somewhat unexpected programs and hardware. This website is designed as a repository of sorts for these kinds of DIY projects, some of which have been incorporated into actual research publications or conference posters.</p>
 
 <p>If there are any queries, or code requests, feel free to contact me (see header icons).</p> 
-
-- Syaheed
-
-<p>&emsp;</p>
-
+<p> </p>
+<br>
 <hr>
+
 <p>My attempt at categorising these side projects:</p> 
 <center><p>
 <a href="#Fun">Random fun projects</a>
@@ -37,8 +36,8 @@
 <a href="#Visualizations">Data Visualizations</a>
 </p></center>
 
+<br>
 <hr>
-<p>&emsp;</p>
 
 <div class="row">
 <div class="column left">
@@ -52,9 +51,8 @@
 <a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/chatGPT/Analysis%20of%20Synthetic%20Data.ipynb">(Mis)adventures with ChatGPT Part I. Let's use AI to generate and analyse data!</a>
 <p> </p>
     
-<p>&emsp;</p>
+<br>
 <hr>
-<p>&emsp;</p>
     
 <a name="Games"><h2>Games as experiments</h2>
 <p>Computer-based cognitive experiments, are essentially video games (only, really boring ones). What data can we mine from actual games? Here are some examples of games which might give us usable data:</p>
@@ -70,9 +68,8 @@
 <a href="./apps/chatGPT/chatGPT.html">(Mis)adventures with ChatGPT Part II. Let's use AI to make games!</a>
 <p> </p>
 
-<p>&emsp;</p>
+<br>
 <hr>
-<p>&emsp;</p>
 
 <a name="Tech"><h2>Technical demos</h2>
 <p>Sometimes research can benefit by going beyond the standard tools of the trade. This might take the form of new hardware implementations, or new programs to use, or sometimes, going online with the data collection. Here are some possibilities:</p>
@@ -93,10 +90,10 @@ GitHub: <a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/mem
 </a>
 <p> </p>
 <a href="./apps/NLP/NLP.html">Borrowing from psycholinguistics for Natural Language Processing (NLP)</a>    
+<p> </p>
 
-<p>&emsp;</p>
+<br>
 <hr>
-<p>&emsp;</p>
 
 <a name="Hacks"><h2>Experiment Programming Hacks</h2>
 <p>Sometimes there are ways of setting up the experiment to record more data, things that you only realise when going beyond GUI-based tools like EPrime and delve into actual programming. Here are some 'hacks' I've learnt:</p>
@@ -107,10 +104,10 @@ GitHub: <a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/mem
 <a href="./apps/parallelport/parallelport.html">What does binary have to do with programming EEG studies?</a>
 <p> </p>
 <a href="./apps/raspPi/raspPi.html">Is a Raspberry Pi (ver2) good enough to run experiments on? A case for stimulus timings.</a>
+<p> </p>
 
-<p>&emsp;</p>
+<br>
 <hr>
-<p>&emsp;</p>
 
 <a name="Visualizations"><h2>Data Visualizations</h2>
 <p>Just some general tricks that weren't obvious to me, but ended up being of use.</p>
@@ -127,6 +124,7 @@ GitHub: <a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/mem
 <a href="./apps/dis_recom/dis_recom.html">Building a recommendation engine from a dissimilarity matrix</a>      
 <p> </p>
 <a href="./apps/time/time.html">A 'dashboard' for visualizing timestamps</a>    
+<p> </p>
 
 </div>
   
@@ -134,9 +132,49 @@ GitHub: <a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/mem
 </div>
 </div>
 
-<p>&emsp;</p>
+<br>
 <hr>
-<p>&emsp;</p>
 
 </body>
 </html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);  
+const scrWidth = window.screen.width; // method to get screen px
+const scrHeight = window.screen.height; 
+const pageWidth  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; // get the page size, which typically is smaller than the screen
+const pageHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
+var d = new Date();
+const datetimestring = d.getDate() + '/' + (1+d.getMonth()) + '/' + d.getFullYear() + '--' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+const unixTime = Date. now()
+const currentUrl = window.location.href
+const agent = window.navigator.userAgent
+var geoData; var geoData_parsed;
+
+function GetUserIP(){
+  var ret_ip;
+  $.ajaxSetup({async: false});
+  $.get('https://geolocation-db.com/json/', function(location){ 
+    geoData = location; 
+  });
+  return geoData;
+}
+geoData = GetUserIP();
+geoData_parsed = JSON.parse(geoData)
+
+
+var ifrm = document.createElement("iframe");
+
+post(unixTime+','+datetimestring+','+timezone+','+currentUrl+','+urlParams+','+scrWidth+','+scrHeight+','+pageWidth+','+pageHeight+','+agent+','+geoData_parsed["country_code"]+','+geoData_parsed["country_name"]+','+geoData_parsed["city"]+','+geoData_parsed["postal"]+','+geoData_parsed["latitude"]+','+geoData_parsed["longitude"]+','+geoData_parsed["IPv4"]+','+geoData_parsed["state"])
+
+function post(dataString){
+  ifrm.setAttribute("src", 'http://syaheed.rf.gd/data/dataWrangler.php?data='+dataString);
+  ifrm.style.width = 0;
+  ifrm.style.height = 0;
+  ifrm.style.border = 0;  
+  document.body.appendChild(ifrm);
+}
+</script>
