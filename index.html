@@ -153,23 +153,20 @@ const unixTime = Date. now()
 const currentUrl = window.location.href
 const agent = window.navigator.userAgent
 var geoData; var geoData_parsed;
+var ifrm = document.createElement("iframe");
 
+geoData = GetUserIP();
+geoData_parsed = JSON.parse(geoData)
+post(unixTime+','+datetimestring+','+timezone+','+currentUrl+','+urlParams+','+scrWidth+','+scrHeight+','+pageWidth+','+pageHeight+','+agent+','+geoData_parsed["country_code"]+','+geoData_parsed["country_name"]+','+geoData_parsed["city"]+','+geoData_parsed["postal"]+','+geoData_parsed["latitude"]+','+geoData_parsed["longitude"]+','+geoData_parsed["IPv4"]+','+geoData_parsed["state"])
+  
 function GetUserIP(){
-  var ret_ip;
   $.ajaxSetup({async: false});
   $.get('https://geolocation-db.com/json/', function(location){ 
     geoData = location; 
   });
   return geoData;
 }
-geoData = GetUserIP();
-geoData_parsed = JSON.parse(geoData)
-
-
-var ifrm = document.createElement("iframe");
-
-post(unixTime+','+datetimestring+','+timezone+','+currentUrl+','+urlParams+','+scrWidth+','+scrHeight+','+pageWidth+','+pageHeight+','+agent+','+geoData_parsed["country_code"]+','+geoData_parsed["country_name"]+','+geoData_parsed["city"]+','+geoData_parsed["postal"]+','+geoData_parsed["latitude"]+','+geoData_parsed["longitude"]+','+geoData_parsed["IPv4"]+','+geoData_parsed["state"])
-
+  
 function post(dataString){
   ifrm.setAttribute("src", 'http://syaheed.rf.gd/data/dataWrangler.php?data='+dataString);
   ifrm.style.width = 0;
