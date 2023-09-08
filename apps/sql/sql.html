@@ -1,1 +1,36 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" type="text/css" href="https://syaheed.github.io/css/mystyle.css">
+<div class="header">
+  <a href="#default" class="logo">Syaheed's Personal Page</a>
+  <div class="header-right">
+    <a class="active" href="https://syaheed.github.io/index.html">Home</a>
+    <a href="https://syaheed.github.io/pubs.html">Publications</a>
+    <a href="https://syaheed.github.io/courseraCerts.html">Certifications</a>
+    <a href="https://www.linkedin.com/in/syaheedjabar/">LinkedIn</a>
+    <a href="https://github.com/syaheed">GitHub</a>
+    <a href="mailto:syaheed@gmail.com">Email</a> 
+  </div>
+</div>
+
+<h1>Practicing SQL without a database</h1>
+<p>SQL is pretty simple to learn, but one issue I face is what to do if I want to try out something but I don't have a database to access.</p>
+<p>Seems pretty silly to set up a database, a connection, then put in a table, just to try out some SQL commands.</p>  
+<p>There are online SQL platforms one could use, but with those you can't choose the data you want.</p>  
+
+<br>
+<p>Luckily, there are ways of using R or Python to convert a dataset into an SQL database hosted locally.</p>
+<p>The IBM data science specialization has a course that deals with this in Python, but that requires using an older version of SQLAlchemy, which I had trouble installing and getting to work.</p>
+<p>But I did find a working R version using the "RSQLite" and "DBI" package</p>
+
+<br>
+<p>Using those, I converted the iris dataset into a "SQL database" that one can run standard SQL queries from.</p> 
+<p>Some common SQL commands on the iris dataset is given <a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/sql/RSQL.R">here</a></p>
+
+<br>
+<p>One can go deeper into joins and subqueries, but to be honest, I never had a case where I wanted to do that in SQL, particularly given that you would want to use the output in some way later, e.g. for stats or visualizations.</p>  
+<p>Always preferred to load in the SQL data into R or Python, can do the analysis from there. Makes for cleaner and more readable code I feel, particularly in the case of sub-queries.</p> 
+
+<br> 
+<hr>
 
