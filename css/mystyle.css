@@ -127,3 +127,7 @@ a {
   transition: max-height 0.2s ease-out;
   background-color: #5a5a5a;
 }
+
+li{
+  margin: 15px 0;
+}
