@@ -1,6 +1,6 @@
 .header {
   overflow: hidden;
-  background-color: darkslategrey;
+  background-image: linear-gradient(rgba(50,50,50,255), rgba(0,0,0,0));
   padding: 20px 10px;
 }
 
