@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html>
-<link rel="stylesheet" href="css/mystyle.css">
+    <style>
+        .pdf-grid {
+            width: 70%;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+
+        .pdf-item {
+            transition: transform .3s ease;
+        }
+
+        .pdf-item:hover {
+            transform: scale(1.8);
+        }
+    </style>
+
+<link rel="stylesheet" type="text/css" href="https://syaheed.github.io/css/mystyle.css">
 <div class="header">
   <a href="#default" class="logo">Syaheed's Personal Page</a>
   <div class="header-right">
@@ -19,6 +37,19 @@
 <br>
 
 <h2>Research Papers</h2>  
+    <div class="pdf-grid">
+        <div class="pdf-item" data-pdf-name="JabarFougnie2022b.pdf"></div>
+        <div class="pdf-item" data-pdf-name="JabarFougnie2022a.pdf"></div>
+        <div class="pdf-item" data-pdf-name="JabarAnderson2017a.pdf"></div>
+        <div class="pdf-item" data-pdf-name="JabarAnderson2017b.pdf"></div>
+        <div class="pdf-item" data-pdf-name="JabarFilipowiczAnderson2017a.pdf"></div>
+        <div class="pdf-item" data-pdf-name="JabarFilipowiczAnderson2017b.pdf"></div>
+        <div class="pdf-item" data-pdf-name="JabarAnderson2015.pdf"></div>
+        <div class="pdf-item" data-pdf-name="HonJabar2018.pdf"></div>
+        <div class="pdf-item" data-pdf-name="HonYapJabar2013.pdf"></div>
+        
+    </div>
+
 <ul>
   <li>Jabar, S. B., and Fougnie, D. (2022). Perception is rich and probabilistic. Scientific reports, 12(1), 1-7 
     <a href="https://doi.org/10.1038/s41598-022-17458-8">DOI</a> 
@@ -86,6 +117,8 @@
 <br>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+
 <script>
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const queryString = window.location.search;
@@ -135,7 +168,43 @@ for (i = 0; i < coll.length; i++) {
     } 
   });
 }
-</script>
 
+        document.addEventListener("DOMContentLoaded", function() {
+            let basePath = "https://syaheed.github.io/publications/";
+            let pdfItems = document.querySelectorAll('.pdf-item');
+            let scale = 2;
+
+            pdfItems.forEach(function(pdfItem) {
+                let pdfName = pdfItem.getAttribute('data-pdf-name');
+                let pdfPath = `${basePath}${pdfName}`;
+
+                pdfjsLib.getDocument(pdfPath).promise.then(function(pdf) {
+                    return pdf.getPage(1);
+                }).then(function(page) {
+                    let viewport = page.getViewport({ scale: 1 });
+                    let canvas = document.createElement('canvas');
+                    let ctx = canvas.getContext('2d');
+                    canvas.width = viewport.width * scale;
+                    canvas.height = (viewport.height / 2) * scale;
+
+                    let renderContext = {
+                        canvasContext: ctx,
+                        viewport: page.getViewport({ scale: scale }),
+                        clip: { x: 0, y: 0, width: viewport.width, height: viewport.height / 2 }
+                    };
+
+                    page.render(renderContext).promise.then(function() {
+                        canvas.style.width = "100%";
+                        canvas.style.height = "100%";
+                        pdfItem.appendChild(canvas);
+                    });
+                });
+
+                pdfItem.addEventListener("click", function() {
+                    window.open(pdfPath, '_blank');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
