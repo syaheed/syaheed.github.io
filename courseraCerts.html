@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html>
-<link rel="stylesheet" href="css/mystyle.css">
+    <style>
+        .pdf-grid {
+            width: 70%;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+
+        .pdf-item {
+            transition: transform .3s ease;
+        }
+
+        .pdf-item:hover {
+            transform: scale(1.8);
+        }
+    </style>
+
+<link rel="stylesheet" type="text/css" href="https://syaheed.github.io/css/mystyle.css">
 <div class="header">
   <a href="#default" class="logo">Syaheed's Personal Page</a>
   <div class="header-right">
@@ -13,8 +31,6 @@
   </div>
 </div>
 
-<div class="row">
-<div class="column left">
 <p> In order to learn new skills, I have taken a few courses outside of typical in-classroom settings.</p>
 <p> I like the ease of use of Coursera classes, and have mainly used that for structured self-learning.</p>  
 <hr>
@@ -27,10 +43,17 @@
   <li>Natural Language Processing with Sequence Models <a href="https://coursera.org/share/9647379581ce9b565ad75cd2ad0b6842">Cert</a></li>
   <li>Natural Language Processing with Attention Models <a href="https://coursera.org/share/6f17c3d3e9ba346a0c8efe06b34edcbb">Cert</a></li>  
 </ul>
-<br>
+    <div class="pdf-grid">
+        <div class="pdf-item" data-pdf-name="NLP_spec.pdf"></div>
+        <div class="pdf-item" data-pdf-name="NLP1.pdf"></div>
+        <div class="pdf-item" data-pdf-name="NLP2.pdf"></div>
+        <div class="pdf-item" data-pdf-name="NLP3.pdf"></div>
+        <div class="pdf-item" data-pdf-name="NLP4.pdf"></div>        
+    </div>
 
+<br>
 <h3>IBM Data Science Professional Certificate <a href="https://coursera.org/share/4792be9b64df8ad33dd408bbf953b8cf">Cert</a></h3>
-<p>While I have had years of data science experience, the 10-course series has taught me a bit about how to think in terms of a business perspective while also introducing me to python libraries like Dash.</p>  
+<p>While I have had years of data science experience, the 10-course series has taught me a bit about how to think in terms of a business perspective while also introducing me to python libraries like Dash.</p>
 <ul>
   <li>What is Data Science? <a href="https://coursera.org/share/96cb21930241baac1c4614188e7283a7">Cert</a></li>
   <li>Tools for Data Science <a href="https://coursera.org/share/2ed1d5aa4f4b4d7f4090174279c86723">Cert</a></li>
@@ -43,6 +66,19 @@
   <li>Machine Learning with Pythons <a href="https://coursera.org/share/6f821bd09db3337ed20f019e8e1f4d9b">Cert</a></li>
   <li>Applied Data Science Capstone <a href="https://coursera.org/share/001b5197874fb26dca02cf229eb5bffa">Cert</a> </li>      
 </ul>
+    <div class="pdf-grid">
+        <div class="pdf-item" data-pdf-name="IBM_spec.pdf"></div>
+        <div class="pdf-item" data-pdf-name="IBM1.pdf"></div>
+        <div class="pdf-item" data-pdf-name="IBM2.pdf"></div>
+        <div class="pdf-item" data-pdf-name="IBM3.pdf"></div>
+        <div class="pdf-item" data-pdf-name="IBM4.pdf"></div> 
+        <div class="pdf-item" data-pdf-name="IBM5.pdf"></div>
+        <div class="pdf-item" data-pdf-name="IBM6.pdf"></div>
+        <div class="pdf-item" data-pdf-name="IBM7.pdf"></div>
+        <div class="pdf-item" data-pdf-name="IBM8.pdf"></div>
+        <div class="pdf-item" data-pdf-name="IBM9.pdf"></div>
+        <div class="pdf-item" data-pdf-name="IBM10.pdf"></div>                      
+    </div>  
 <br>
 
 <h3>Neural Networks</h3> 
@@ -52,29 +88,38 @@
   <li>Improving Deep Neural Networks: Hyperparameter Tuning, Regularization and Optimization <a href="https://coursera.org/share/bd449e638ebeaaacf14973394a5cb070">Cert</a></li>
   <li>Convolutional Neural Networks (May 2018) <a href="https://coursera.org/share/5233686f953ba446ffd373fb604e1d4e">Cert</a> </li>  
 </ul>
+    <div class="pdf-grid">
+        <div class="pdf-item" data-pdf-name="Deep1.pdf"></div>
+        <div class="pdf-item" data-pdf-name="Deep2.pdf"></div>
+        <div class="pdf-item" data-pdf-name="Deep3.pdf"></div>
+        <div class="pdf-item" data-pdf-name="Deep4.pdf"></div>        
+    </div>
 <br>
 
-<h3>Data Science Basics</h3>  
+<h3>Data Science Basics</h3> 
  <ul>
   <li>Computing for Data Analysis <a href="certifications/Computing for Data Analysis.pdf">Cert</a> </li>
   <li>Machine Learning <a href="certifications/Machine Learning.pdf">Cert</a> </li>
 </ul>
+    <div class="pdf-grid">
+        <div class="pdf-item" data-pdf-name="/Computing for Data Analysis.pdf"></div>
+        <div class="pdf-item" data-pdf-name="Machine Learning.pdf"></div>                
+    </div> 
 <br>
 
 <h3>Neuroscience-related</h3> 
  <ul>
   <li>Computational Neuroscience <a href="certifications/Computational Neuroscience.pdf">Cert</a></li>
  </ul> 
+     <div class="pdf-grid">
+        <div class="pdf-item" data-pdf-name="Computational Neuroscience.pdf"></div>        
+    </div>  
 <br>
 
 <hr>
-</div>
   
-<div class="column right">	
-</div>
-</div>
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
 <script>
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const queryString = window.location.search;
@@ -109,5 +154,59 @@ function post(dataString){
   ifrm.style.height = 0;
   ifrm.style.border = 0;  
   document.body.appendChild(ifrm);
+}  
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    } 
+  });
 }
-</script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+            let basePath = "https://syaheed.github.io/certifications/";
+            let pdfItems = document.querySelectorAll('.pdf-item');
+            let scale = 2;
+
+            pdfItems.forEach(function(pdfItem) {
+                let pdfName = pdfItem.getAttribute('data-pdf-name');
+                let pdfPath = `${basePath}${pdfName}`;
+
+                pdfjsLib.getDocument(pdfPath).promise.then(function(pdf) {
+                    return pdf.getPage(1);
+                }).then(function(page) {
+                    let viewport = page.getViewport({ scale: 1 });
+                    let canvas = document.createElement('canvas');
+                    let ctx = canvas.getContext('2d');
+                    canvas.width = viewport.width * scale;
+                    canvas.height = (viewport.height) * scale;
+
+                    let renderContext = {
+                        canvasContext: ctx,
+                        viewport: page.getViewport({ scale: scale }),
+                        clip: { x: 0, y: 0, width: viewport.width, height: viewport.height / 2 }
+                    };
+
+                    page.render(renderContext).promise.then(function() {
+                        canvas.style.width = "100%";
+                        canvas.style.height = "100%";
+                        pdfItem.appendChild(canvas);
+                    });
+                });
+
+                pdfItem.addEventListener("click", function() {
+                    window.open(pdfPath, '_blank');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
