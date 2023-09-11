@@ -1,16 +1,26 @@
 <!DOCTYPE html>
 <html>
+<meta charset="UTF-8">
 <link rel="stylesheet" href="https://syaheed.github.io/css/mystyle.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css" rel="stylesheet" />
+<div class="header"> <!-- ignore this part-->
+  <a href="#default" class="logo">Syaheed's Personal Page</a>
+  <div class="header-right">
+    <a class="active" href="https://syaheed.github.io/index.html">Home</a>
+    <a href="https://syaheed.github.io/pubs.html">Publications</a>
+    <a href="https://syaheed.github.io/courseraCerts.html">Certifications</a>
+    <a href="https://www.linkedin.com/in/syaheedjabar/">LinkedIn</a>
+    <a href="https://github.com/syaheed">GitHub</a>
+    <a href="mailto:syaheed@gmail.com">Email</a> 
+  </div>
+</div>
 <body>
 
-<p>How would you embed code snippets rom something you uploaded in Github into a HTML page?</p>
-<p>Using the <a href="https://prismjs.com/">Prism.js</a> API with a clever bit of Javascript might do the trick!</p>  
-<p>Let's make <a href="https://raw.githubusercontent.com/syaheed/syaheed.github.io/main/apps/githubEmbed/githubEmbed.html">this</a> a webpage that uses its own code as an example!</p> 
-<p>A recursion joke and a practical guide all rolled into one. It's like code-ception!</p> 
+<h2>How would you embed code snippets from Github?</h2>
+<p>Using the <a href="https://prismjs.com/">Prism.js</a> API with a clever bit of Javascript might do the trick!</p> Let's make <a href="https://raw.githubusercontent.com/syaheed/syaheed.github.io/main/apps/githubEmbed/githubEmbed.html">this</a> a webpage that uses its own code as an example! A recursion joke and a practical guide all rolled into one. It's like code-ception!</p> 
 <br>
 
-<p>First we link to the stylesheet we want to use. In this case, there is the one I use for my pages, and one for prism.</p>
+<p>First we link to the stylesheet we want to use. In this case, there is the one I use for my pages, and one for Prism's syntax highlighting. Ignore the lines for my headers &#128540 </p>
   <pre><code id="gist1" class="language-html"></code></pre>
   <!--if code is python, use class="language-python"-->
   <br>
@@ -42,8 +52,8 @@
     }
 
     // Call the function for each code block
-    fetchGitHubCode('gist1', 'https://api.github.com/repos/syaheed/syaheed.github.io/contents/apps/githubEmbed/githubEmbed.html', 1, 6);
-    fetchGitHubCode('gist2', 'https://api.github.com/repos/syaheed/syaheed.github.io/contents/apps/githubEmbed/githubEmbed.html', 7, 25);
+    fetchGitHubCode('gist1', 'https://api.github.com/repos/syaheed/syaheed.github.io/contents/apps/githubEmbed/githubEmbed.html', 1, 18);
+    fetchGitHubCode('gist2', 'https://api.github.com/repos/syaheed/syaheed.github.io/contents/apps/githubEmbed/githubEmbed.html', 18, 25);
     fetchGitHubCode('gist3', 'https://api.github.com/repos/syaheed/syaheed.github.io/contents/apps/githubEmbed/githubEmbed.html', 26, 51);
 
 </script>
