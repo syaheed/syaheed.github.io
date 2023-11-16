@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <style>
-        #pdf-thumbnails {
+        #pdf-thumbnails1 {
             display: flex;
             flex-wrap: wrap;
             justify-content: center; /* Center items horizontally */
@@ -10,15 +10,34 @@
             padding: 20px; /* Optional padding for better spacing */
         }
 
-        #pdf-thumbnails a img {
+        #pdf-thumbnails1 a img {
             width: 200px; /* Adjust the size as needed */
             height: auto;
             transition: transform 0.3s ease;
         }
 
-        #pdf-thumbnails a:hover img {
+        #pdf-thumbnails1 a:hover img {
             transform: scale(2.0); /* Adjust the zoom level as needed */
         }
+
+        #pdf-thumbnails2 {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Center items horizontally */
+            align-items: center; /* Center items vertically */
+            gap: 10px; /* Adjust the space between thumbnails */
+            padding: 20px; /* Optional padding for better spacing */
+        }
+
+        #pdf-thumbnails2 a img {
+            width: 200px; /* Adjust the size as needed */
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        #pdf-thumbnails2 a:hover img {
+            transform: scale(2.0); /* Adjust the zoom level as needed */
+        }    
     </style>
 
 <link rel="stylesheet" type="text/css" href="https://syaheed.github.io/css/mystyle.css">
@@ -40,7 +59,7 @@
 <br>
 
 <h2>Research Papers</h2>  
-    <div id="pdf-thumbnails">
+    <div id="pdf-thumbnails1">
         <!-- Thumbnails will be loaded here -->
     </div>
 <ul>
@@ -79,6 +98,9 @@
 <br>
    
 <h2>International Conferences</h2>
+    <div id="pdf-thumbnails2">
+        <!-- Thumbnails will be loaded here -->
+    </div>
 <ul>
   <li><p>Ng, K. P., Patterson, M. D., Jabar, S. B., Leonardo, J., Chiew, H. J., Ng, A. S. L., & Kandiah, N. NG-001: A novel multi-domain digital cognitive intervention for neuropsychiatric symptoms in mild cognitive impairment. Lightning Round Presentation at Alzheimer's Association International Conference 2023. <a href="https://alz.confex.com/alz/2023/meetingapp.cgi/Paper/75630">Link</a></p></li> 
   <li><p>Ng, K. P., Patterson, M. D., Jabar, S. B., Leonardo, J., Chiew, H. J., Ng, A. S. L., & Kandiah, N. NG-001: A novel multi-domain digital cognitive intervention for neuropsychiatric symptoms in mild cognitive impairment. Poster at Alzheimer's Association International Conference 2023. <a href="https://alz.confex.com/alz/2023/meetingapp.cgi/Paper/82114">Link</a></p></li>
@@ -161,7 +183,30 @@ for (i = 0; i < coll.length; i++) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const thumbnailsContainer = document.getElementById('pdf-thumbnails');
+    const thumbnailsContainer = document.getElementById('pdf-thumbnails2');
+    const files = ['Syaheed_CSBBCS2015_Poster',
+                   'syaheed_vss_2020_final',
+                    'sj_vss2016_final']; // Array of filenames without extension
+
+    files.forEach(file => {
+        // Create anchor element
+        let a = document.createElement('a');
+        a.href = `publications/${file}.pdf`;
+        a.target = '_blank'; // Opens PDF in a new tab
+
+        // Create image element for the thumbnail
+        let img = document.createElement('img');
+        img.src = `publications/${file}.jpg`;
+        img.alt = `${file} thumbnail`;
+
+        // Append the image to the anchor, then the anchor to the container
+        a.appendChild(img);
+        thumbnailsContainer.appendChild(a);
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const thumbnailsContainer = document.getElementById('pdf-thumbnails1');
     const files = ['JabarFougnie2022a',
                    'JabarFougnie2022b',
                     'HonYapJabar2013',
@@ -188,7 +233,6 @@ document.addEventListener('DOMContentLoaded', function() {
         thumbnailsContainer.appendChild(a);
     });
 });
-
 
     </script>
 </body>
