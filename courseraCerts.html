@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html>
     <style>
-        .pdf-grid {
-            width: 70%;
-            margin: auto;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
+        #pdf-thumbnails {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Center items horizontally */
+            align-items: center; /* Center items vertically */
+            gap: 10px; /* Adjust the space between thumbnails */
+            padding: 20px; /* Optional padding for better spacing */
         }
 
-        .pdf-item {
-            transition: transform .3s ease;
+        #pdf-thumbnails a img {
+            width: 200px; /* Adjust the size as needed */
+            height: auto;
+            transition: transform 0.3s ease;
         }
 
-        .pdf-item:hover {
-            transform: scale(1.8);
+        #pdf-thumbnails a:hover img {
+            transform: scale(2.0); /* Adjust the zoom level as needed */
         }
     </style>
 
@@ -35,6 +38,9 @@
 <p> I like the ease of use of Coursera classes, and have mainly used that for structured self-learning.</p>  
 <hr>
 <br>
+    <div id="pdf-thumbnails1">
+        <!-- Thumbnails will be loaded here -->
+    </div>
 
 <h3>Natural Language Processing Specialization <a href="https://coursera.org/share/cc6ad2ee210e20eb316c82f3113b7b49">Cert</a> </h3>  
 <ul>
@@ -43,13 +49,6 @@
   <li>Natural Language Processing with Sequence Models <a href="https://coursera.org/share/9647379581ce9b565ad75cd2ad0b6842">Cert</a></li>
   <li>Natural Language Processing with Attention Models <a href="https://coursera.org/share/6f17c3d3e9ba346a0c8efe06b34edcbb">Cert</a></li>  
 </ul>
-    <div class="pdf-grid">
-        <div class="pdf-item" data-pdf-name="NLP_spec.pdf"></div>
-        <div class="pdf-item" data-pdf-name="NLP1.pdf"></div>
-        <div class="pdf-item" data-pdf-name="NLP2.pdf"></div>
-        <div class="pdf-item" data-pdf-name="NLP3.pdf"></div>
-        <div class="pdf-item" data-pdf-name="NLP4.pdf"></div>        
-    </div>
 
 <br>
 <h3>IBM Data Science Professional Certificate <a href="https://coursera.org/share/4792be9b64df8ad33dd408bbf953b8cf">Cert</a></h3>
@@ -66,19 +65,6 @@
   <li>Machine Learning with Pythons <a href="https://coursera.org/share/6f821bd09db3337ed20f019e8e1f4d9b">Cert</a></li>
   <li>Applied Data Science Capstone <a href="https://coursera.org/share/001b5197874fb26dca02cf229eb5bffa">Cert</a> </li>      
 </ul>
-    <div class="pdf-grid">
-        <div class="pdf-item" data-pdf-name="IBM_spec.pdf"></div>
-        <div class="pdf-item" data-pdf-name="IBM1.pdf"></div>
-        <div class="pdf-item" data-pdf-name="IBM2.pdf"></div>
-        <div class="pdf-item" data-pdf-name="IBM3.pdf"></div>
-        <div class="pdf-item" data-pdf-name="IBM4.pdf"></div> 
-        <div class="pdf-item" data-pdf-name="IBM5.pdf"></div>
-        <div class="pdf-item" data-pdf-name="IBM6.pdf"></div>
-        <div class="pdf-item" data-pdf-name="IBM7.pdf"></div>
-        <div class="pdf-item" data-pdf-name="IBM8.pdf"></div>
-        <div class="pdf-item" data-pdf-name="IBM9.pdf"></div>
-        <div class="pdf-item" data-pdf-name="IBM10.pdf"></div>                      
-    </div>  
 <br>
 
 <h3>Neural Networks</h3> 
@@ -88,12 +74,6 @@
   <li>Improving Deep Neural Networks: Hyperparameter Tuning, Regularization and Optimization <a href="https://coursera.org/share/bd449e638ebeaaacf14973394a5cb070">Cert</a></li>
   <li>Convolutional Neural Networks (May 2018) <a href="https://coursera.org/share/5233686f953ba446ffd373fb604e1d4e">Cert</a> </li>  
 </ul>
-    <div class="pdf-grid">
-        <div class="pdf-item" data-pdf-name="Deep1.pdf"></div>
-        <div class="pdf-item" data-pdf-name="Deep2.pdf"></div>
-        <div class="pdf-item" data-pdf-name="Deep3.pdf"></div>
-        <div class="pdf-item" data-pdf-name="Deep4.pdf"></div>        
-    </div>
 <br>
 
 <h3>Data Science Basics</h3> 
@@ -101,25 +81,17 @@
   <li>Computing for Data Analysis <a href="certifications/Computing for Data Analysis.pdf">Cert</a> </li>
   <li>Machine Learning <a href="certifications/Machine Learning.pdf">Cert</a> </li>
 </ul>
-    <div class="pdf-grid">
-        <div class="pdf-item" data-pdf-name="/Computing for Data Analysis.pdf"></div>
-        <div class="pdf-item" data-pdf-name="Machine Learning.pdf"></div>                
-    </div> 
 <br>
 
 <h3>Neuroscience-related</h3> 
  <ul>
   <li>Computational Neuroscience <a href="certifications/Computational Neuroscience.pdf">Cert</a></li>
  </ul> 
-     <div class="pdf-grid">
-        <div class="pdf-item" data-pdf-name="Computational Neuroscience.pdf"></div>        
-    </div>  
 <br>
 
 <hr>
   
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
 <script>
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const queryString = window.location.search;
@@ -170,43 +142,33 @@ for (i = 0; i < coll.length; i++) {
   });
 }
 
-        document.addEventListener("DOMContentLoaded", function() {
-            let basePath = "https://syaheed.github.io/certifications/";
-            let pdfItems = document.querySelectorAll('.pdf-item');
-            let scale = 2;
+document.addEventListener('DOMContentLoaded', function() {
+    const thumbnailsContainer = document.getElementById('pdf-thumbnails');
+    const files = ['Computational Neuroscience',
+                    'NLP_spec',
+                    'Computing for Data Analysis',
+                    'IBM_spec',
+                    'Deep2',
+                    'Machine Learning']; // Array of filenames without extension
 
-            pdfItems.forEach(function(pdfItem) {
-                let pdfName = pdfItem.getAttribute('data-pdf-name');
-                let pdfPath = `${basePath}${pdfName}`;
+    files.forEach(file => {
+        // Create anchor element
+        let a = document.createElement('a');
+        a.href = `publications/${file}.pdf`;
+        a.target = '_blank'; // Opens PDF in a new tab
 
-                pdfjsLib.getDocument(pdfPath).promise.then(function(pdf) {
-                    return pdf.getPage(1);
-                }).then(function(page) {
-                    let viewport = page.getViewport({ scale: 1 });
-                    let canvas = document.createElement('canvas');
-                    let ctx = canvas.getContext('2d');
-                    canvas.width = viewport.width * scale;
-                    canvas.height = (viewport.height) * scale;
+        // Create image element for the thumbnail
+        let img = document.createElement('img');
+        img.src = `certifications/${file}.jpg`;
+        img.alt = `${file} thumbnail`;
 
-                    let renderContext = {
-                        canvasContext: ctx,
-                        viewport: page.getViewport({ scale: scale }),
-                        clip: { x: 0, y: 0, width: viewport.width, height: viewport.height / 2 }
-                    };
+        // Append the image to the anchor, then the anchor to the container
+        a.appendChild(img);
+        thumbnailsContainer.appendChild(a);
+    });
+});
 
-                    page.render(renderContext).promise.then(function() {
-                        canvas.style.width = "100%";
-                        canvas.style.height = "100%";
-                        pdfItem.appendChild(canvas);
-                    });
-                });
-
-                pdfItem.addEventListener("click", function() {
-                    window.open(pdfPath, '_blank');
-                });
-            });
-        });
-    </script>
+</script>
 </body>
 </html>
 
