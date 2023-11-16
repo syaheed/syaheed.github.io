@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html>
     <style>
-        .pdf-grid {
-            width: 70%;
-            margin: auto;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
+        #pdf-thumbnails {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Center items horizontally */
+            align-items: center; /* Center items vertically */
+            gap: 10px; /* Adjust the space between thumbnails */
+            padding: 20px; /* Optional padding for better spacing */
         }
 
-        .pdf-item {
-            transition: transform .3s ease;
+        #pdf-thumbnails a img {
+            width: 200px; /* Adjust the size as needed */
+            height: auto;
+            transition: transform 0.3s ease;
         }
 
-        .pdf-item:hover {
-            transform: scale(1.8);
+        #pdf-thumbnails a:hover img {
+            transform: scale(2.0); /* Adjust the zoom level as needed */
         }
     </style>
 
@@ -37,16 +40,8 @@
 <br>
 
 <h2>Research Papers</h2>  
-    <div class="pdf-grid">
-        <div class="pdf-item" data-pdf-name="JabarFougnie2022b.pdf"></div>
-        <div class="pdf-item" data-pdf-name="JabarFougnie2022a.pdf"></div>
-        <div class="pdf-item" data-pdf-name="JabarAnderson2017a.pdf"></div>
-        <div class="pdf-item" data-pdf-name="JabarAnderson2017b.pdf"></div>
-        <div class="pdf-item" data-pdf-name="JabarFilipowiczAnderson2017a.pdf"></div>
-        <div class="pdf-item" data-pdf-name="JabarFilipowiczAnderson2017b.pdf"></div>
-        <div class="pdf-item" data-pdf-name="JabarAnderson2015.pdf"></div>
-        <div class="pdf-item" data-pdf-name="HonJabar2018.pdf"></div>
-        <div class="pdf-item" data-pdf-name="HonYapJabar2013.pdf"></div>
+    <div id="pdf-thumbnails">
+        <!-- Thumbnails will be loaded here -->
     </div>
 <ul>
   <li>Jabar, S. B., and Fougnie, D. (2022). Perception is rich and probabilistic. Scientific reports, 12(1), 1-7 
@@ -84,11 +79,6 @@
 <br>
    
 <h2>International Conferences</h2>
-    <div class="pdf-grid">
-        <div class="pdf-item" data-pdf-name="Syaheed_CSBBCS2015_Poster.pdf"></div>
-        <div class="pdf-item" data-pdf-name="sj_vss2016_final.pdf"></div>
-        <div class="pdf-item" data-pdf-name="syaheed_vss_2020_final.pdf"></div>
-    </div>
 <ul>
   <li><p>Ng, K. P., Patterson, M. D., Jabar, S. B., Leonardo, J., Chiew, H. J., Ng, A. S. L., & Kandiah, N. NG-001: A novel multi-domain digital cognitive intervention for neuropsychiatric symptoms in mild cognitive impairment. Lightning Round Presentation at Alzheimer's Association International Conference 2023. <a href="https://alz.confex.com/alz/2023/meetingapp.cgi/Paper/75630">Link</a></p></li> 
   <li><p>Ng, K. P., Patterson, M. D., Jabar, S. B., Leonardo, J., Chiew, H. J., Ng, A. S. L., & Kandiah, N. NG-001: A novel multi-domain digital cognitive intervention for neuropsychiatric symptoms in mild cognitive impairment. Poster at Alzheimer's Association International Conference 2023. <a href="https://alz.confex.com/alz/2023/meetingapp.cgi/Paper/82114">Link</a></p></li>
@@ -120,7 +110,6 @@
 <br>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
 <script>
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const queryString = window.location.search;
@@ -171,42 +160,36 @@ for (i = 0; i < coll.length; i++) {
   });
 }
 
-        document.addEventListener("DOMContentLoaded", function() {
-            let basePath = "https://syaheed.github.io/publications/";
-            let pdfItems = document.querySelectorAll('.pdf-item');
-            let scale = 2;
+document.addEventListener('DOMContentLoaded', function() {
+    const thumbnailsContainer = document.getElementById('pdf-thumbnails');
+    const files = ['JabarFougnie2022a',
+                   'JabarFougnie2022b',
+                    'HonYapJabar2013',
+                    'JabarAnderson2015',
+                    'JabarFilipowiczAnderson2017a',
+                    'JabarFilipowiczAnderson2017b',
+                    'HonJabar2018',
+                    'JabarAnderson2017b',
+                    'JabarAnderson2017a']; // Array of filenames without extension
 
-            pdfItems.forEach(function(pdfItem) {
-                let pdfName = pdfItem.getAttribute('data-pdf-name');
-                let pdfPath = `${basePath}${pdfName}`;
+    files.forEach(file => {
+        // Create anchor element
+        let a = document.createElement('a');
+        a.href = `publications/${file}.pdf`;
+        a.target = '_blank'; // Opens PDF in a new tab
 
-                pdfjsLib.getDocument(pdfPath).promise.then(function(pdf) {
-                    return pdf.getPage(1);
-                }).then(function(page) {
-                    let viewport = page.getViewport({ scale: 1 });
-                    let canvas = document.createElement('canvas');
-                    let ctx = canvas.getContext('2d');
-                    canvas.width = viewport.width * scale;
-                    canvas.height = (viewport.height / 2) * scale;
+        // Create image element for the thumbnail
+        let img = document.createElement('img');
+        img.src = `publications/${file}.jpg`;
+        img.alt = `${file} thumbnail`;
 
-                    let renderContext = {
-                        canvasContext: ctx,
-                        viewport: page.getViewport({ scale: scale }),
-                        clip: { x: 0, y: 0, width: viewport.width, height: viewport.height / 2 }
-                    };
+        // Append the image to the anchor, then the anchor to the container
+        a.appendChild(img);
+        thumbnailsContainer.appendChild(a);
+    });
+});
 
-                    page.render(renderContext).promise.then(function() {
-                        canvas.style.width = "100%";
-                        canvas.style.height = "100%";
-                        pdfItem.appendChild(canvas);
-                    });
-                });
 
-                pdfItem.addEventListener("click", function() {
-                    window.open(pdfPath, '_blank');
-                });
-            });
-        });
     </script>
 </body>
 </html>
