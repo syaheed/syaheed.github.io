@@ -1,5 +1,27 @@
 <!DOCTYPE html>
 <html>
+
+<style>
+.container {
+   height: auto;
+    width: auto;
+}
+
+.right {
+    width: 500px;
+    float: none;
+}
+
+.left {
+  position: relative;
+  top: 35px;
+  word-wrap: break-word;
+  display:inline-block;
+  padding: 3px;
+  box-sizing: border-box;
+}
+    </style>
+
 <link rel="stylesheet" href="https://syaheed.github.io/css/mystyle.css">
 <div class="header">
   <a href="#default" class="logo">Syaheed's Personal Page</a>
@@ -13,8 +35,10 @@
   </div>
 </div>
 
-<div class="column left">
-<h2>What I cannot create, I do not understand. <sub>&emsp; -Richard Feynman </sub></h2>
+<div class="container">
+<div class="column left"><br> 
+
+ <h2>What I cannot create, I do not understand. <sub>&emsp; -Richard Feynman </sub></h2>
 <br>
 
 <p>The above is probably my favourite quote. As someone who has done extensive research in cognitive neuroscience, I find that it is often too easy to rely on established tools, without needing a grasp of the technicalities involved. Building your own tools is a good way of understanding the intricacies of your data. This idea has led me to play around with programming and tinkering with somewhat unexpected programs and hardware. This website is designed as a repository of sorts for these kinds of DIY projects, some of which have been incorporated into actual research publications or conference posters.</p>
@@ -22,8 +46,7 @@
 <p>If there are any queries, or code requests, feel free to contact me (see header icons).</p> 
 <p> </p>
 
-<br>
-
+<br> 
 <p>My attempt at categorising these side projects:</p> 
 <center><p>
 <a href="#Fun">Random fun projects</a>
@@ -38,31 +61,37 @@
 </p></center>
 </div>
 
+
 <div class="column right"><br>  
   <img src="https://syaheed.github.io/apps/time/time.jpg" alt="timedata" width="400" height=auto> 
   <br><br>  
 </div> 
 
+</div> 
+
 <br>
 <hr>
 
-<div class="column left">
-  <a name="Fun"><h2>Random Fun Projects</h2>
-  <p>Will update with random projects I do where the techniques might have some use later on ...</p>
-  <a href="./apps/foodRatings/foodRatings.html">Which country has the best food?</a>
-  <p> </p>
-  <a href="./apps/ML/AdaBoost/AdaBoost.html">Boosting a decision tree? A scikit-learn example.</a>
-  <p> </p>
-  <a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/chatGPT/Analysis%20of%20Synthetic%20Data.ipynb">(Mis)adventures with ChatGPT Part I. Let's use AI to generate and analyse data!</a>
-  <p> </p>
-  <a href="./apps/githubEmbed/githubEmbed.html">Showing code snippets via a webpage that references its own code!</a>
-  <p> </p>
-</div>
 
-<div class="column right"><br>  
-  <img src="https://syaheed.github.io/samples/ChatGPT_plot1.png" alt="ChatGPT analyses data" width="400" height=auto> 
-  <br><br>  
-</div> 
+<div class="container">
+  <div class="column left">
+    <a name="Fun"><h2>Random Fun Projects</h2>
+    <p>Will update with random projects I do where the techniques might have some use later on ...</p>
+    <a href="./apps/foodRatings/foodRatings.html">Which country has the best food?</a>
+    <p> </p>
+    <a href="./apps/ML/AdaBoost/AdaBoost.html">Boosting a decision tree? A scikit-learn example.</a>
+    <p> </p>
+    <a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/chatGPT/Analysis%20of%20Synthetic%20Data.ipynb">(Mis)adventures with ChatGPT Part I. Let's use AI to generate and analyse data!</a>
+    <p> </p>
+    <a href="./apps/githubEmbed/githubEmbed.html">Showing code snippets via a webpage that references its own code!</a>
+    <p> </p>
+  </div>
+
+  <div class="column right"><br>  
+    <img src="https://syaheed.github.io/samples/ChatGPT_plot1.png" alt="ChatGPT analyses data" width="400" height=auto> 
+    <br><br>  
+  </div> 
+</div>
 
 <div class="column left">        
   <a name="Games"><h2>Games as experiments</h2>
