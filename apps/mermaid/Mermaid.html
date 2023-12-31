@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="https://syaheed.github.io/css/mystyle.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css" rel="stylesheet" />
+
+<div class="header">
+  <a href="#default" class="logo">Syaheed's Personal Page</a>
+  <div class="header-right">
+    <a class="active" href="https://syaheed.github.io/index.html">Home</a>
+    <a href="https://syaheed.github.io/pubs.html">Publications</a>
+    <a href="https://syaheed.github.io/courseraCerts.html">Certifications</a>
+    <a href="https://www.linkedin.com/in/syaheedjabar/">LinkedIn</a>
+    <a href="https://github.com/syaheed">GitHub</a>
+    <a href="mailto:syaheed@gmail.com">Email</a> 
+  </div>
+</div>
+
+<p>Let's say we want to a build flowchart but don't want to spend time drawing it nicely just to have to update and re-draw it later. Can we create charts with just code that takes care of the drawing and formatting for us? With  <a href="https://mermaid.js.org/syntax/flowchart.html">Mermaid</a>, we can!</p>
+
+<div class="box">
+<pre class="mermaid">
+  graph LR
+      A --- B
+      B-->C[fa:fa-ban forbidden]
+      B-->D(fa:fa-spinner);
+</pre>
+</div>  
+
+<div class="code">
+<p>This is the code used to generate the figure above</p>
+<pre><code id="gist1" class="language-html"></code></pre>
+<br>
+</div>  
+  
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+<script>
+async function fetchGitHubCode(elementId, url, startLine, endLine) {
+const response = await fetch(url);
+const data = await response.json();
+const decodedCode = atob(data.content);
+const lines = decodedCode.split('\n');
+const selectedLines = lines.slice(startLine - 1, endLine).join('\n');
+document.getElementById(elementId).textContent = selectedLines;
+Prism.highlightAll();
+}
+
+fetchGitHubCode('gist1', 'https://api.github.com/repos/syaheed/syaheed.github.io/contents/apps/githubEmbed/githubEmbed.html', 23, 26);
+</script>
+
+</html>
