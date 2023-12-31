@@ -4,6 +4,13 @@
 <link rel="stylesheet" type="text/css" href="https://syaheed.github.io/css/mystyle.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css" rel="stylesheet" />
 
+<style> 
+div.mbox .marker {
+  fill: white !important;
+  stroke: white !important;
+}
+</style>
+
 <div class="header">
   <a href="#default" class="logo">Syaheed's Personal Page</a>
   <div class="header-right">
@@ -16,14 +23,22 @@
   </div>
 </div>
 
-<p>Let's say we want to a build flowchart but don't want to spend time drawing it nicely just to have to update and re-draw it later. Can we create charts with just code that takes care of the drawing and formatting for us? With  <a href="https://mermaid.js.org/syntax/flowchart.html">Mermaid</a>, we can!</p>
+<p>Let's say we want to a build flowchart but don't want to spend time drawing it nicely just to have to update and re-draw it later. Can we create charts with just code that takes care of the drawing and formatting for us? With <a href="https://mermaid.js.org/syntax/flowchart.html">Mermaid</a>, we can! Let's try this out using the flowchart described in <a href="https://psychology.fandom.com/wiki/Flowcharts"> https://psychology.fandom.com/wiki/Flowcharts</a>.</p>
 
-<div class="box">
+<div class="mbox">
 <pre class="mermaid">
-  graph LR
-      A --- B
-      B-->C[fa:fa-ban forbidden]
-      B-->D(fa:fa-spinner);
+flowchart LR
+
+linkStyle default stroke:white,arrowhead:white,color:black
+classDef pink fill:#eb3dd6,stroke:#000,stroke-width:2px,color:#fff
+classDef yellow fill:#fc822b,stroke:#000,stroke-width:2px,color:#fff
+classDef green fill:#16b522,stroke:#000,stroke-width:2px,color:#fff
+
+Start(Lamp Doesn't Work):::pink ---> A{Lamp plugged in?}:::yellow
+A{Lamp plugged in?} ---> |Yes|B{Bulb burned out?}:::yellow
+A ---> |No| C(Plug in lamp):::green
+B ---> |Yes| D(Replace bulb):::green
+B ---> |No| E(Buy new lamp):::green
 </pre>
 </div>  
 
@@ -48,7 +63,7 @@ document.getElementById(elementId).textContent = selectedLines;
 Prism.highlightAll();
 }
 
-fetchGitHubCode('gist1', 'https://api.github.com/repos/syaheed/syaheed.github.io/contents/apps/mermaid/mermaid.html', 23, 26);
+fetchGitHubCode('gist1', 'https://api.github.com/repos/syaheed/syaheed.github.io/contents/apps/githubEmbed/githubEmbed.html', 30, 41);
 </script>
 
 </html>
