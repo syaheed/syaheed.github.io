@@ -13,28 +13,16 @@
   </div>
 </div>
 
-<h1>Computer V1 Vision</h1>
+<h1>Analysing heart rate data from ECGs</h1>
 
-<p> </p>
-
-<p> Part of my research revolves around the idea that V1 neurons can be tuned by stimulus statistics. Given that, I thought it would be interesting to develop a kind of computer vision model that would dynamically tune itself. This was part of a tech demo I cobbled together in an afternoon to show that the computer vision part was not hard to do. </p>
-
-<p> </p>
-
-<p> The idea is simple. the "Retinal" layer is simply what a webcam sees. The "LGN" layer maximises the contrast based on the part of the 'retina' that is selected. Information from the LGN layer is fed to the V1 layer, which has 'neurons' that code for each possible integer value of orientation. This was done by Gabor filtering the LGN image, the matrix sum of which corresponds to the 'activity' of a given V1 neuron. Then it was a simple matter of decoding the population firing across the neurons.</p>
+<p>ECG measures look like this. </p>
 
 <figure>
-  <img src="./camV1.png" height="400" width="600">
-  <figcaption> An orientation detector using Gabor filters and population decoding</figcaption>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/SinusRhythmLabels.svg/440px-SinusRhythmLabels.svg.png" height="400" width="600">
+  <figcaption> SinusRhythms (image from Wikipedia)</figcaption>
 </figure>
 
-<p> </p>
-
-<p> Granted, the system is not tuning itself yet. I have been developing a model for that without the use of a camera for practical purposes (chiefly, so I can simulate runs without having to show stimulus to a camera in real-time). But the model I made for my thesis seems to work well, and manages to make predictions about human performance that we were able to validate (manuscript in progress). Perhaps then it is time to apply that model to this camera application? </p>
-
-<p> </p>
-
-<p><a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/camV1/camV1.py">Here</a> is the Python code used for the camera.</p>
+<p>Each component tells us different things about heart activity, but what if we are interested in heart rate and variability in heart rate measures?</p>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
