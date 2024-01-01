@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" type="text/css" href="https://syaheed.github.io/css/mystyle.css">
+<div class="header">
+  <a href="#default" class="logo">Syaheed's Personal Page</a>
+  <div class="header-right">
+    <a class="active" href="https://syaheed.github.io/index.html">Home</a>
+    <a href="https://syaheed.github.io/pubs.html">Publications</a>
+    <a href="https://syaheed.github.io/courseraCerts.html">Certifications</a>
+    <a href="https://www.linkedin.com/in/syaheedjabar/">LinkedIn</a>
+    <a href="https://github.com/syaheed">GitHub</a>
+    <a href="mailto:syaheed@gmail.com">Email</a> 
+  </div>
+</div>
 
+<h1>Computer V1 Vision</h1>
+
+<p> </p>
+
+<p> Part of my research revolves around the idea that V1 neurons can be tuned by stimulus statistics. Given that, I thought it would be interesting to develop a kind of computer vision model that would dynamically tune itself. This was part of a tech demo I cobbled together in an afternoon to show that the computer vision part was not hard to do. </p>
+
+<p> </p>
+
+<p> The idea is simple. the "Retinal" layer is simply what a webcam sees. The "LGN" layer maximises the contrast based on the part of the 'retina' that is selected. Information from the LGN layer is fed to the V1 layer, which has 'neurons' that code for each possible integer value of orientation. This was done by Gabor filtering the LGN image, the matrix sum of which corresponds to the 'activity' of a given V1 neuron. Then it was a simple matter of decoding the population firing across the neurons.</p>
+
+<figure>
+  <img src="./camV1.png" height="400" width="600">
+  <figcaption> An orientation detector using Gabor filters and population decoding</figcaption>
+</figure>
+
+<p> </p>
+
+<p> Granted, the system is not tuning itself yet. I have been developing a model for that without the use of a camera for practical purposes (chiefly, so I can simulate runs without having to show stimulus to a camera in real-time). But the model I made for my thesis seems to work well, and manages to make predictions about human performance that we were able to validate (manuscript in progress). Perhaps then it is time to apply that model to this camera application? </p>
+
+<p> </p>
+
+<p><a href="https://github.com/syaheed/syaheed.github.io/blob/main/apps/camV1/camV1.py">Here</a> is the Python code used for the camera.</p>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);  
+const scrWidth = window.screen.width; // method to get screen px
+const scrHeight = window.screen.height; 
+const pageWidth  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; // get the page size, which typically is smaller than the screen
+const pageHeight = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
+var d = new Date();
+const datetimestring = d.getDate() + '/' + (1+d.getMonth()) + '/' + d.getFullYear() + '--' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+const unixTime = Date. now()
+const currentUrl = window.location.href
+const agent = window.navigator.userAgent
+var geoData; var geoData_parsed;
+var ifrm = document.createElement("iframe");
+
+geoData = GetUserIP();
+geoData_parsed = JSON.parse(geoData)
+post(unixTime+','+datetimestring+','+timezone+','+currentUrl+','+urlParams+','+scrWidth+','+scrHeight+','+pageWidth+','+pageHeight+','+agent+','+geoData_parsed["country_code"]+','+geoData_parsed["country_name"]+','+geoData_parsed["city"]+','+geoData_parsed["postal"]+','+geoData_parsed["latitude"]+','+geoData_parsed["longitude"]+','+geoData_parsed["IPv4"]+','+geoData_parsed["state"])
+  
+function GetUserIP(){
+  $.ajaxSetup({async: false});
+  $.get('https://geolocation-db.com/json/', function(location){ 
+    geoData = location; 
+  });
+  return geoData;
+}
+  
+function post(dataString){
+  ifrm.setAttribute("src", 'https://syaheed.rf.gd/data/dataWrangler.php?data='+dataString);
+  ifrm.style.width = 0;
+  ifrm.style.height = 0;
+  ifrm.style.border = 0;  
+  document.body.appendChild(ifrm);
+}
+</script>
