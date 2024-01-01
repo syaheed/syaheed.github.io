@@ -16,21 +16,13 @@ seed_choice = 1337 # not sure what this does
 save_filename = "./output.json" # enables saving and loading across sessions.
 
 # The system prompt will govern the behaviour of the openAI model. This is an example of an AI that generates scenes.
-sys_prompt = 'You are an expert novel author. For each prompt, craft a scene starting with the given prompt and concluding where the prompt ends. Your scene should unfold with vivid detail, encompassing the senses and the immediate environment to enrich the setting. Characters must converse in a manner that reflects their unique personalities, using clever and witty dialogue that naturally conveys the required information. Include gestures, expressions, and interactions that bring the scene to life. Ensure the dialogue is snappy and contributes to the scene without progressing beyond the initial scenario. Maintain a focus on creating an immersive experience within the confines of the present moment described in the prompt. Try to respond with at least 700 words. Do not end scenes unless the user specifies it.'
+sys_prompt = 'You are an expert novel author, specialising in thrillers. For each prompt, craft a scene starting with the given prompt and concluding where the prompt ends. Your scene should unfold with vivid detail, encompassing the senses and the immediate environment to enrich the setting. Characters must converse in a manner that reflects their unique personalities, using clever and witty dialogue that naturally conveys the required information. Include gestures, expressions, and interactions that bring the scene to life. Ensure the dialogue is snappy and contributes to the scene without progressing beyond the initial scenario. Maintain a focus on creating an immersive experience within the confines of the present moment described in the prompt. Try to respond with at least 700 words. Do not end scenes unless the user specifies it.'
 msg_htx = [{"role": "system", "content": sys_prompt}]
 print()
 
 def add_prompt(prompt):
     msg_htx.append( {'role': 'user', 'content': prompt})
-    msg_sel = [{"role": "system", "content": sys_prompt}]
-    len_msg = len(msg_htx)
-    keep_length = 13; # adjust this accordingly, keep the most recent 13 messages and also for the system prompt and the initial user prompt (GPT4 turbo has greater context length and can handle more messages than this, adjust accordingly)
-    if len_msg <= keep_length+2: 
-        msg_sel.extend(msg_htx[1:(len_msg-1)])
-    else:
-        msg_sel.extend(msg_htx[1:2])
-        msg_sel.extend(msg_htx[-keep_length:]) 
-    stream = client.chat.completions.create(model=model_choice, messages=msg_sel, max_tokens=max_tokens_choice, stream=True, temperature=temperature_choice, seed=seed_choice)
+    stream = client.chat.completions.create(model=model_choice, messages=msg_htx, max_tokens=max_tokens_choice, stream=True, temperature=temperature_choice, seed=seed_choice)
     print()
     reply = ''
     for chunk in stream:
@@ -77,7 +69,7 @@ while True:
         print(msg_htx[-1]['content'])
         print()          
     elif prompt.lower() == "init": #a canned initial prompt, useful for debugging
-        add_prompt("Dr. Xavier Kang is a scientist who has invented a new form of computing. It is set to revolutinalise the entire computing landscape from servers to workstations to laptops to tablets to mobile phones. Companies are in a mad dash to buy out the tech, but Xavier prefers to launch the device himself. Xavier is asked for many interviews but he turns them all down.")
+        add_prompt("Dr. Xavier Kang is a scientist who has invented a new form of computing. It is set to revolutionise the entire computing landscape from servers to workstations to laptops to tablets to mobile phones. Companies are in a mad dash to buy out the tech, but Xavier prefers to launch the device himself. Xavier is asked for many interviews but he turns them all down. Describe this scene where Xavier goes through his e-mails in detail.")
     else:
         add_prompt(prompt)
 
