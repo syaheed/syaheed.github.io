@@ -11,8 +11,9 @@ model_choice = "gpt-3.5-turbo-1106" # just to pick from the different models. Su
 #model_choice = "gpt-4-1106-preview"
 
 max_tokens_choice = 2048 
+message_memory = 15 # how many messages to keep in mind for context (system prompt, the next 2 messages, and then the rest are from the end)
 temperature_choice = 0.7 #parameter for the model
-seed_choice = 1337 # not sure what this does
+seed_choice = 1337 # not sure what this does since the generated response is still different with the same seed. 
 save_filename = "./output.json" # enables saving and loading across sessions.
 
 # The system prompt will govern the behaviour of the openAI model. This is an example of an AI that generates scenes.
@@ -22,6 +23,11 @@ print()
 
 def add_prompt(prompt):
     msg_htx.append( {'role': 'user', 'content': prompt})
+    msg_sel =  msg_htx
+    mlen = len(msg_htx)
+    if mlen > message_memory:
+        for m in range(mlen-message_memory):
+            msg_sel.pop(3) # remove the 4th message until you only get to the desired number of messages in history chosen
     stream = client.chat.completions.create(model=model_choice, messages=msg_htx, max_tokens=max_tokens_choice, stream=True, temperature=temperature_choice, seed=seed_choice)
     print()
     reply = ''
