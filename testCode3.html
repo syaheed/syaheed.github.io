@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Put your fingertip on the camera. You should see red.</title>
+    <title>Camera Access with RGB and Red-Green Graphs in Dark Mode</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<h1>Access Phone Back Camera and Analyze RGB Values</h1>
+<h1>Cover the camera lens with your finger until the picture you see is just red.</h1>
 <video id="video" width="640" height="480" autoplay></video>
 <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
 
@@ -34,6 +34,7 @@
 
     let lastTimestamp = 0;
     let frameTimes = [];
+    let preferredDeviceId = null;
 
     // Setup for RGB Chart (Chart.js)
     const ctxRGB = document.getElementById('rgbChart').getContext('2d');
@@ -153,8 +154,10 @@
         }
 
         if (highestResolutionCamera) {
-            // Use the camera with the highest resolution and disable auto settings
-            useCamera(highestResolutionCamera.deviceId);
+            // Store the preferred deviceId
+            preferredDeviceId = highestResolutionCamera.deviceId;
+            // Use the camera with the highest resolution
+            useCamera(preferredDeviceId);
         } else {
             // Fallback to the default back camera
             useDefaultCamera();
@@ -179,6 +182,8 @@
         navigator.mediaDevices.getUserMedia({
             video: {
                 facingMode: { exact: "environment" },
+                width: { ideal: 1920 }, // Lock the resolution to avoid auto-switching
+                height: { ideal: 1080 },
                 advanced: [
                     { whiteBalanceMode: "manual" }, // Disable auto white balance
                     { exposureMode: "manual" }, // Disable auto exposure
@@ -200,6 +205,8 @@
         navigator.mediaDevices.getUserMedia({
             video: {
                 deviceId: { exact: deviceId },
+                width: { ideal: 1920 }, // Lock the resolution to avoid auto-switching
+                height: { ideal: 1080 },
                 advanced: [
                     { whiteBalanceMode: "manual" }, // Disable auto white balance
                     { exposureMode: "manual" }, // Disable auto exposure
@@ -215,6 +222,14 @@
             console.log("Error accessing specific camera: " + err);
         });
     }
+
+    // Detect if camera switches and force back the preferred camera
+    video.addEventListener('error', function() {
+        console.log("Camera switched or encountered an error. Re-requesting the preferred camera.");
+        if (preferredDeviceId) {
+            useCamera(preferredDeviceId);
+        }
+    });
 
     // Call the function to find the back camera with the highest resolution
     findBackCameraWithHighestResolution();
