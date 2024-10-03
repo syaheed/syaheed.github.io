@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Access with RGB, Red-Green Graphs, Peak Detection, and BPM</title>
+    <title>Camera Access with RGB and Red-Green Graphs in Dark Mode</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: black; /* Make the body background black */
+            color: white; /* White text for the body */
+        }
+    </style>
 </head>
 <body>
 
@@ -18,21 +24,16 @@
 <!-- Chart to display the Red - Green difference -->
 <canvas id="redGreenChart" width="400" height="200"></canvas>
 
-<!-- Display the FPS and BPM -->
+<!-- Display the FPS -->
 <p>FPS: <span id="fpsDisplay">Calculating...</span></p>
-<p>BPM: <span id="bpmDisplay">Calculating...</span></p>
 
 <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const fpsDisplay = document.getElementById('fpsDisplay');
-    const bpmDisplay = document.getElementById('bpmDisplay');
 
-    let lastTimestamp = 0; // To keep track of the previous frame time
-    let frameTimes = []; // Array to store time differences between frames
-    let peakTimes = []; // Array to store the times of detected peaks for BPM calculation
-    let prevValue = null; // To track previous Red-Green value for peak detection
-    let threshold = 2; // Threshold for peak detection (to avoid noise)
+    let lastTimestamp = 0;
+    let frameTimes = [];
 
     // Setup for RGB Chart (Chart.js)
     const ctxRGB = document.getElementById('rgbChart').getContext('2d');
@@ -41,19 +42,19 @@
         datasets: [
             {
                 label: 'Red',
-                borderColor: 'red',
+                borderColor: 'red', // Red line for Red channel
                 data: [],
                 fill: false,
             },
             {
                 label: 'Green',
-                borderColor: 'green',
+                borderColor: 'lime', // Lime green line for Green channel (bright color)
                 data: [],
                 fill: false,
             },
             {
                 label: 'Blue',
-                borderColor: 'blue',
+                borderColor: 'cyan', // Cyan line for Blue channel (bright color)
                 data: [],
                 fill: false,
             }
@@ -65,15 +66,26 @@
         data: chartDataRGB,
         options: {
             scales: {
-                x: { 
-                    title: { display: true, text: 'Time (hh:mm:ss.x)' },
+                x: {
+                    title: { display: true, text: 'Time (hh:mm:ss.x)', color: 'white' },
+                    ticks: { color: 'white' }, // White x-axis ticks
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }, // Faint grid lines
                     min: 0, 
                     max: 50 
                 },
-                y: { 
-                    title: { display: true, text: 'Mean Value' }, 
+                y: {
+                    title: { display: true, text: 'Mean Value', color: 'white' },
+                    ticks: { color: 'white' }, // White y-axis ticks
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }, // Faint grid lines
                     min: 0, 
                     max: 255 
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white' // White legend labels
+                    }
                 }
             }
         }
@@ -86,7 +98,7 @@
         datasets: [
             {
                 label: 'Red - Green',
-                borderColor: 'purple',
+                borderColor: 'magenta', // Magenta line for Red-Green difference
                 data: [],
                 fill: false,
             }
@@ -98,13 +110,24 @@
         data: chartDataRedGreen,
         options: {
             scales: {
-                x: { 
-                    title: { display: true, text: 'Time (hh:mm:ss.x)' },
+                x: {
+                    title: { display: true, text: 'Time (hh:mm:ss.x)', color: 'white' },
+                    ticks: { color: 'white' }, // White x-axis ticks
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }, // Faint grid lines
                     min: 0, 
                     max: 50 
                 },
-                y: { 
-                    title: { display: true, text: 'Difference (Red - Green)' }
+                y: {
+                    title: { display: true, text: 'Difference (Red - Green)', color: 'white' },
+                    ticks: { color: 'white' }, // White y-axis ticks
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' }, // Faint grid lines
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white' // White legend labels
+                    }
                 }
             }
         }
@@ -164,9 +187,6 @@
         updateRGBChart(meanR, meanG, meanB, currentTime);
         updateRedGreenChart(redGreenDiff, currentTime);
 
-        // Perform peak detection on the Red-Green difference
-        detectPeaks(parseFloat(redGreenDiff), currentTime);
-
         // Calculate FPS
         calculateFPS(timestamp);
 
@@ -218,39 +238,6 @@
         
         // Update the chart
         redGreenChart.update();
-    }
-
-    function detectPeaks(currentValue, currentTime) {
-        const redGreenData = chartDataRedGreen.datasets[0].data;
-
-        // Minimum data length to perform peak detection
-        if (redGreenData.length > 3) {
-            const secondLast = redGreenData[redGreenData.length - 2];
-            const last = redGreenData[redGreenData.length - 1];
-
-            // Detect peak: current point should be lower than the last point, and the last point should be greater than the second last
-            // Also, last peak must exceed a threshold to filter noise
-            if (last > secondLast && last > currentValue && last - secondLast > threshold) {
-                const peakTime = new Date(); // Get current peak time
-
-                // Store the peak time
-                peakTimes.push(peakTime);
-
-                // Keep only recent peaks
-                if (peakTimes.length > 2) {
-                    peakTimes.shift();
-                }
-
-                // If we have at least 2 peaks, calculate BPM
-                if (peakTimes.length >= 2) {
-                    const interval = (peakTimes[1] - peakTimes[0]) / 1000; // Convert interval to seconds
-                    const bpm = (60 / interval).toFixed(2); // Convert to beats per minute
-
-                    // Display BPM
-                    bpmDisplay.textContent = bpm;
-                }
-            }
-        }
     }
 
     function calculateFPS(timestamp) {
