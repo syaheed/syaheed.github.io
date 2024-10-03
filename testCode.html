@@ -3,29 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Access</title>
+    <title>Camera Access with Pixel Analysis</title>
 </head>
 <body>
 
-<h1>Access Phone Camera</h1>
+<h1>Access Phone Back Camera and Analyze Pixels</h1>
 <video id="video" width="640" height="480" autoplay></video>
+<canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+<p>Mean R: <span id="meanR"></span></p>
+<p>Mean G: <span id="meanG"></span></p>
+<p>Mean B: <span id="meanB"></span></p>
 
 <script>
     const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const meanR = document.getElementById('meanR');
+    const meanG = document.getElementById('meanG');
+    const meanB = document.getElementById('meanB');
 
     // Check if the browser supports the getUserMedia API
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // Request the camera
-        navigator.mediaDevices.getUserMedia({ video: true })
+        // Request the back (environment) camera
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } })
         .then(function(stream) {
             // Set the video stream to the video element
             video.srcObject = stream;
+            // Start analyzing the video frames once the video starts playing
+            video.addEventListener('loadeddata', analyzeFrame);
         })
         .catch(function(err) {
             console.log("Error: " + err);
         });
     } else {
         alert("Sorry, your browser does not support camera access.");
+    }
+
+    function analyzeFrame() {
+        const context = canvas.getContext('2d');
+
+        // Draw the current video frame onto the canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Get the pixel data from the canvas
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+
+        let totalR = 0, totalG = 0, totalB = 0;
+        let numPixels = pixels.length / 4;
+
+        // Loop through each pixel and accumulate R, G, B values
+        for (let i = 0; i < pixels.length; i += 4) {
+            totalR += pixels[i];     // Red channel
+            totalG += pixels[i + 1]; // Green channel
+            totalB += pixels[i + 2]; // Blue channel
+        }
+
+        // Calculate the mean for each channel
+        meanR.textContent = (totalR / numPixels).toFixed(2);
+        meanG.textContent = (totalG / numPixels).toFixed(2);
+        meanB.textContent = (totalB / numPixels).toFixed(2);
+
+        // Call the function again to keep analyzing the next frame
+        requestAnimationFrame(analyzeFrame);
     }
 </script>
 
