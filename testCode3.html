@@ -36,6 +36,7 @@
 
     let lastTimestamp = 0;
     let frameTimes = [];
+    let originalDeviceId = null; // Store the original device ID
 
     // Setup for RGB Chart (Chart.js)
     const ctxRGB = document.getElementById('rgbChart').getContext('2d');
@@ -145,14 +146,29 @@
 
             // Show the deviceId of the camera being used
             const track = stream.getVideoTracks()[0];
-            const cameraId = track.getSettings().deviceId;
-            cameraIdDisplay.textContent = cameraId || "Unavailable";
+            originalDeviceId = track.getSettings().deviceId; // Store the original device ID
+            cameraIdDisplay.textContent = originalDeviceId || "Unavailable";
+
+            // Continuously check if the camera changes
+            checkCameraSwitch(track);
 
             video.addEventListener('loadeddata', analyzeFrame);
         })
         .catch(function(err) {
             console.log("Error accessing camera: " + err);
         });
+    }
+
+    // Function to continuously check for camera switches
+    function checkCameraSwitch(track) {
+        setInterval(() => {
+            const currentDeviceId = track.getSettings().deviceId;
+            if (currentDeviceId !== originalDeviceId) {
+                // Update the camera ID display if the camera switched
+                cameraIdDisplay.textContent = "Switched to: " + (currentDeviceId || "Unknown");
+                console.log("Camera switched. New deviceId:", currentDeviceId);
+            }
+        }, 1000); // Check every second
     }
 
     // Call the function to use the default back camera
