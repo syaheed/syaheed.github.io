@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Access with RGB and Red-Green Graphs</title>
+    <title>Camera Access with RGB, Red-Green Graphs, and FPS</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -18,9 +18,16 @@
 <!-- Chart to display the Red - Green difference -->
 <canvas id="redGreenChart" width="400" height="200"></canvas>
 
+<!-- Display the FPS -->
+<p>FPS: <span id="fpsDisplay">Calculating...</span></p>
+
 <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
+    const fpsDisplay = document.getElementById('fpsDisplay');
+
+    let lastTimestamp = 0; // To keep track of the previous frame time
+    let frameTimes = []; // Array to store time differences between frames
 
     // Setup for RGB Chart (Chart.js)
     const ctxRGB = document.getElementById('rgbChart').getContext('2d');
@@ -53,8 +60,16 @@
         data: chartDataRGB,
         options: {
             scales: {
-                x: { title: { display: true, text: 'Frame' } },
-                y: { title: { display: true, text: 'Mean Value' }, min: 0, max: 255 }
+                x: { 
+                    title: { display: true, text: 'Frame' },
+                    min: 0, // Start range at frame 0
+                    max: 50 // Show only the most recent 50 frames at any given time
+                },
+                y: { 
+                    title: { display: true, text: 'Mean Value' }, 
+                    min: 0, 
+                    max: 255 
+                }
             }
         }
     });
@@ -78,8 +93,14 @@
         data: chartDataRedGreen,
         options: {
             scales: {
-                x: { title: { display: true, text: 'Frame' } },
-                y: { title: { display: true, text: 'Difference (Red - Green)' } }
+                x: { 
+                    title: { display: true, text: 'Frame' },
+                    min: 0, // Start range at frame 0
+                    max: 50 // Show only the most recent 50 frames at any given time
+                },
+                y: { 
+                    title: { display: true, text: 'Difference (Red - Green)' }
+                }
             }
         }
     });
@@ -103,7 +124,7 @@
 
     let frameCount = 0;
 
-    function analyzeFrame() {
+    function analyzeFrame(timestamp) {
         const context = canvas.getContext('2d');
 
         // Draw the current video frame onto the canvas
@@ -135,6 +156,9 @@
         updateRGBChart(meanR, meanG, meanB);
         updateRedGreenChart(redGreenDiff);
 
+        // Calculate FPS
+        calculateFPS(timestamp);
+
         // Call the function again to keep analyzing the next frame
         requestAnimationFrame(analyzeFrame);
     }
@@ -156,6 +180,10 @@
         chartDataRGB.datasets[1].data.push(g);
         chartDataRGB.datasets[2].data.push(b);
 
+        // Adjust the x-axis range for the most recent 50 frames
+        rgbChart.options.scales.x.min = frameCount > 50 ? frameCount - 50 : 0;
+        rgbChart.options.scales.x.max = frameCount;
+        
         // Update the chart
         rgbChart.update();
     }
@@ -173,8 +201,31 @@
         // Push new data to the Red-Green difference dataset
         chartDataRedGreen.datasets[0].data.push(redGreenDiff);
 
+        // Adjust the x-axis range for the most recent 50 frames
+        redGreenChart.options.scales.x.min = frameCount > 50 ? frameCount - 50 : 0;
+        redGreenChart.options.scales.x.max = frameCount;
+        
         // Update the chart
         redGreenChart.update();
+    }
+
+    function calculateFPS(timestamp) {
+        if (lastTimestamp) {
+            // Calculate the time difference between the current and previous frames
+            const delta = timestamp - lastTimestamp;
+            const fps = 1000 / delta;
+
+            // Add the current frame time to the array and limit it to the last 20 samples
+            frameTimes.push(fps);
+            if (frameTimes.length > 20) frameTimes.shift();
+
+            // Calculate the average FPS
+            const avgFPS = (frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length).toFixed(2);
+
+            // Display the average FPS
+            fpsDisplay.textContent = avgFPS;
+        }
+        lastTimestamp = timestamp;
     }
 </script>
 
