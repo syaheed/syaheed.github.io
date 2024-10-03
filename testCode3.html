@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<h1>Cover the camera lens with your finger until the picture you see is just red.</h1>
+<h1>Cover the camera lens with your finger until the picture you see is just red.</h1> 
 <video id="video" width="640" height="480" autoplay></video>
 <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
 
@@ -24,17 +24,18 @@
 <!-- Chart to display the Red - Green difference -->
 <canvas id="redGreenChart" width="400" height="200"></canvas>
 
-<!-- Display the FPS -->
+<!-- Display the FPS and Camera ID -->
 <p>FPS: <span id="fpsDisplay">Calculating...</span></p>
+<p>Camera ID: <span id="cameraIdDisplay">Fetching...</span></p>
 
 <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const fpsDisplay = document.getElementById('fpsDisplay');
+    const cameraIdDisplay = document.getElementById('cameraIdDisplay');
 
     let lastTimestamp = 0;
     let frameTimes = [];
-    let preferredDeviceId = null;
 
     // Setup for RGB Chart (Chart.js)
     const ctxRGB = document.getElementById('rgbChart').getContext('2d');
@@ -134,65 +135,19 @@
         }
     });
 
-    // Function to find the back camera with the highest resolution
-    async function findBackCameraWithHighestResolution() {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-        const backCameras = videoDevices.filter(device => device.label.toLowerCase().includes('back'));
-
-        let highestResolutionCamera = null;
-        let maxResolution = 0;
-
-        for (let camera of backCameras) {
-            const resolution = await getCameraResolution(camera.deviceId);
-            const resolutionArea = resolution.width * resolution.height;
-
-            if (resolutionArea > maxResolution) {
-                maxResolution = resolutionArea;
-                highestResolutionCamera = camera;
-            }
-        }
-
-        if (highestResolutionCamera) {
-            // Store the preferred deviceId
-            preferredDeviceId = highestResolutionCamera.deviceId;
-            // Use the camera with the highest resolution
-            useCamera(preferredDeviceId);
-        } else {
-            // Fallback to the default back camera
-            useDefaultCamera();
-        }
-    }
-
-    // Function to check the supported resolution of a camera
-    function getCameraResolution(deviceId) {
-        return navigator.mediaDevices.getUserMedia({
-            video: { deviceId: { exact: deviceId } }
-        }).then(stream => {
-            const track = stream.getVideoTracks()[0];
-            const settings = track.getSettings();
-            track.stop(); // Stop the track once we have the settings
-
-            return { width: settings.width || 640, height: settings.height || 480 };
-        });
-    }
-
-    // Request the default back-facing (environment) camera if no specific camera is found
+    // Request the default back-facing (environment) camera
     function useDefaultCamera() {
         navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: { exact: "environment" },
-                width: { ideal: 1920 }, // Lock the resolution to avoid auto-switching
-                height: { ideal: 1080 },
-                advanced: [
-                    { whiteBalanceMode: "manual" }, // Disable auto white balance
-                    { exposureMode: "manual" }, // Disable auto exposure
-                    { focusMode: "manual" } // Disable auto focus
-                ]
-            }
+            video: { facingMode: { exact: "environment" } }
         })
         .then(function(stream) {
             video.srcObject = stream;
+
+            // Show the deviceId of the camera being used
+            const track = stream.getVideoTracks()[0];
+            const cameraId = track.getSettings().deviceId;
+            cameraIdDisplay.textContent = cameraId || "Unavailable";
+
             video.addEventListener('loadeddata', analyzeFrame);
         })
         .catch(function(err) {
@@ -200,39 +155,8 @@
         });
     }
 
-    // Request the camera using its deviceId and disable all auto settings
-    function useCamera(deviceId) {
-        navigator.mediaDevices.getUserMedia({
-            video: {
-                deviceId: { exact: deviceId },
-                width: { ideal: 1920 }, // Lock the resolution to avoid auto-switching
-                height: { ideal: 1080 },
-                advanced: [
-                    { whiteBalanceMode: "manual" }, // Disable auto white balance
-                    { exposureMode: "manual" }, // Disable auto exposure
-                    { focusMode: "manual" } // Disable auto focus
-                ]
-            }
-        })
-        .then(function(stream) {
-            video.srcObject = stream;
-            video.addEventListener('loadeddata', analyzeFrame);
-        })
-        .catch(function(err) {
-            console.log("Error accessing specific camera: " + err);
-        });
-    }
-
-    // Detect if camera switches and force back the preferred camera
-    video.addEventListener('error', function() {
-        console.log("Camera switched or encountered an error. Re-requesting the preferred camera.");
-        if (preferredDeviceId) {
-            useCamera(preferredDeviceId);
-        }
-    });
-
-    // Call the function to find the back camera with the highest resolution
-    findBackCameraWithHighestResolution();
+    // Call the function to use the default back camera
+    useDefaultCamera();
 
     let frameCount = 0;
 
