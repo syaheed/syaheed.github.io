@@ -133,22 +133,73 @@
         }
     });
 
-    // Check if the browser supports the getUserMedia API
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // Request the back (environment) camera
+    // Function to find the back camera with the highest resolution
+    async function findBackCameraWithHighestResolution() {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        const backCameras = videoDevices.filter(device => device.label.toLowerCase().includes('back'));
+
+        let highestResolutionCamera = null;
+        let maxResolution = 0;
+
+        for (let camera of backCameras) {
+            const resolution = await getCameraResolution(camera.deviceId);
+            const resolutionArea = resolution.width * resolution.height;
+
+            if (resolutionArea > maxResolution) {
+                maxResolution = resolutionArea;
+                highestResolutionCamera = camera;
+            }
+        }
+
+        if (highestResolutionCamera) {
+            // Use the camera with the highest resolution
+            useCamera(highestResolutionCamera.deviceId);
+        } else {
+            // Fallback to the default back camera
+            useDefaultCamera();
+        }
+    }
+
+    // Function to check the supported resolution of a camera
+    function getCameraResolution(deviceId) {
+        return navigator.mediaDevices.getUserMedia({
+            video: { deviceId: { exact: deviceId } }
+        }).then(stream => {
+            const track = stream.getVideoTracks()[0];
+            const settings = track.getSettings();
+            track.stop(); // Stop the track once we have the settings
+
+            return { width: settings.width || 640, height: settings.height || 480 };
+        });
+    }
+
+    // Request the default back-facing (environment) camera if no specific camera is found
+    function useDefaultCamera() {
         navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } })
         .then(function(stream) {
-            // Set the video stream to the video element
             video.srcObject = stream;
-            // Start analyzing the video frames once the video starts playing
             video.addEventListener('loadeddata', analyzeFrame);
         })
         .catch(function(err) {
-            console.log("Error: " + err);
+            console.log("Error accessing camera: " + err);
         });
-    } else {
-        alert("Sorry, your browser does not support camera access.");
     }
+
+    // Request the camera using its deviceId
+    function useCamera(deviceId) {
+        navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } })
+        .then(function(stream) {
+            video.srcObject = stream;
+            video.addEventListener('loadeddata', analyzeFrame);
+        })
+        .catch(function(err) {
+            console.log("Error accessing specific camera: " + err);
+        });
+    }
+
+    // Call the function to find the back camera with the highest resolution
+    findBackCameraWithHighestResolution();
 
     let frameCount = 0;
 
@@ -242,18 +293,13 @@
 
     function calculateFPS(timestamp) {
         if (lastTimestamp) {
-            // Calculate the time difference between the current and previous frames
             const delta = timestamp - lastTimestamp;
             const fps = 1000 / delta;
 
-            // Add the current frame time to the array and limit it to the last 20 samples
             frameTimes.push(fps);
             if (frameTimes.length > 20) frameTimes.shift();
 
-            // Calculate the average FPS
             const avgFPS = (frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length).toFixed(2);
-
-            // Display the average FPS
             fpsDisplay.textContent = avgFPS;
         }
         lastTimestamp = timestamp;
@@ -265,7 +311,7 @@
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const seconds = String(now.getSeconds()).padStart(2, '0');
-        const milliseconds = String(Math.floor(now.getMilliseconds() / 100)).padStart(1, '0'); // Get milliseconds rounded to 1 digit
+        const milliseconds = String(Math.floor(now.getMilliseconds() / 100)).padStart(1, '0');
         return `${hours}:${minutes}:${seconds}.${milliseconds}`;
     }
 </script>
