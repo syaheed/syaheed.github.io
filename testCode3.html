@@ -31,6 +31,8 @@
     let lastTimestamp = 0; // To keep track of the previous frame time
     let frameTimes = []; // Array to store time differences between frames
     let peakTimes = []; // Array to store the times of detected peaks for BPM calculation
+    let prevValue = null; // To track previous Red-Green value for peak detection
+    let threshold = 2; // Threshold for peak detection (to avoid noise)
 
     // Setup for RGB Chart (Chart.js)
     const ctxRGB = document.getElementById('rgbChart').getContext('2d');
@@ -163,7 +165,7 @@
         updateRedGreenChart(redGreenDiff, currentTime);
 
         // Perform peak detection on the Red-Green difference
-        detectPeaks(redGreenDiff, currentTime);
+        detectPeaks(parseFloat(redGreenDiff), currentTime);
 
         // Calculate FPS
         calculateFPS(timestamp);
@@ -227,7 +229,8 @@
             const last = redGreenData[redGreenData.length - 1];
 
             // Detect peak: current point should be lower than the last point, and the last point should be greater than the second last
-            if (last > secondLast && last > currentValue) {
+            // Also, last peak must exceed a threshold to filter noise
+            if (last > secondLast && last > currentValue && last - secondLast > threshold) {
                 const peakTime = new Date(); // Get current peak time
 
                 // Store the peak time
