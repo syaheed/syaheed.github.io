@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Access with RGB and Red-Green Graphs in Dark Mode</title>
+    <title>Put your fingertip on the camera. You should see red.</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -153,7 +153,7 @@
         }
 
         if (highestResolutionCamera) {
-            // Use the camera with the highest resolution
+            // Use the camera with the highest resolution and disable auto settings
             useCamera(highestResolutionCamera.deviceId);
         } else {
             // Fallback to the default back camera
@@ -176,7 +176,16 @@
 
     // Request the default back-facing (environment) camera if no specific camera is found
     function useDefaultCamera() {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } })
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: { exact: "environment" },
+                advanced: [
+                    { whiteBalanceMode: "manual" }, // Disable auto white balance
+                    { exposureMode: "manual" }, // Disable auto exposure
+                    { focusMode: "manual" } // Disable auto focus
+                ]
+            }
+        })
         .then(function(stream) {
             video.srcObject = stream;
             video.addEventListener('loadeddata', analyzeFrame);
@@ -186,9 +195,18 @@
         });
     }
 
-    // Request the camera using its deviceId
+    // Request the camera using its deviceId and disable all auto settings
     function useCamera(deviceId) {
-        navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } })
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                deviceId: { exact: deviceId },
+                advanced: [
+                    { whiteBalanceMode: "manual" }, // Disable auto white balance
+                    { exposureMode: "manual" }, // Disable auto exposure
+                    { focusMode: "manual" } // Disable auto focus
+                ]
+            }
+        })
         .then(function(stream) {
             video.srcObject = stream;
             video.addEventListener('loadeddata', analyzeFrame);
