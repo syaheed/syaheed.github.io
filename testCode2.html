@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Access with RGB and Red-Green Graphs</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h1>Access Phone Back Camera and Analyze RGB Values</h1>
+<video id="video" width="640" height="480" autoplay></video>
+<canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+<!-- Chart to display the RGB values -->
+<canvas id="rgbChart" width="400" height="200"></canvas>
+
+<!-- Chart to display the Red - Green difference -->
+<canvas id="redGreenChart" width="400" height="200"></canvas>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+
+    // Setup for RGB Chart (Chart.js)
+    const ctxRGB = document.getElementById('rgbChart').getContext('2d');
+    const chartDataRGB = {
+        labels: [], // Timestamps or frame indices
+        datasets: [
+            {
+                label: 'Red',
+                borderColor: 'red',
+                data: [],
+                fill: false,
+            },
+            {
+                label: 'Green',
+                borderColor: 'green',
+                data: [],
+                fill: false,
+            },
+            {
+                label: 'Blue',
+                borderColor: 'blue',
+                data: [],
+                fill: false,
+            }
+        ]
+    };
+
+    const rgbChart = new Chart(ctxRGB, {
+        type: 'line',
+        data: chartDataRGB,
+        options: {
+            scales: {
+                x: { title: { display: true, text: 'Frame' } },
+                y: { title: { display: true, text: 'Mean Value' }, min: 0, max: 255 }
+            }
+        }
+    });
+
+    // Setup for Red-Green Difference Chart (Chart.js)
+    const ctxRedGreen = document.getElementById('redGreenChart').getContext('2d');
+    const chartDataRedGreen = {
+        labels: [], // Timestamps or frame indices
+        datasets: [
+            {
+                label: 'Red - Green',
+                borderColor: 'purple',
+                data: [],
+                fill: false,
+            }
+        ]
+    };
+
+    const redGreenChart = new Chart(ctxRedGreen, {
+        type: 'line',
+        data: chartDataRedGreen,
+        options: {
+            scales: {
+                x: { title: { display: true, text: 'Frame' } },
+                y: { title: { display: true, text: 'Difference (Red - Green)' } }
+            }
+        }
+    });
+
+    // Check if the browser supports the getUserMedia API
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Request the back (environment) camera
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } })
+        .then(function(stream) {
+            // Set the video stream to the video element
+            video.srcObject = stream;
+            // Start analyzing the video frames once the video starts playing
+            video.addEventListener('loadeddata', analyzeFrame);
+        })
+        .catch(function(err) {
+            console.log("Error: " + err);
+        });
+    } else {
+        alert("Sorry, your browser does not support camera access.");
+    }
+
+    let frameCount = 0;
+
+    function analyzeFrame() {
+        const context = canvas.getContext('2d');
+
+        // Draw the current video frame onto the canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Get the pixel data from the canvas
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+
+        let totalR = 0, totalG = 0, totalB = 0;
+        let numPixels = pixels.length / 4;
+
+        // Loop through each pixel and accumulate R, G, B values
+        for (let i = 0; i < pixels.length; i += 4) {
+            totalR += pixels[i];     // Red channel
+            totalG += pixels[i + 1]; // Green channel
+            totalB += pixels[i + 2]; // Blue channel
+        }
+
+        // Calculate the mean for each channel
+        const meanR = (totalR / numPixels).toFixed(2);
+        const meanG = (totalG / numPixels).toFixed(2);
+        const meanB = (totalB / numPixels).toFixed(2);
+
+        // Calculate the Red - Green difference
+        const redGreenDiff = (meanR - meanG).toFixed(2);
+
+        // Update the charts with new data
+        updateRGBChart(meanR, meanG, meanB);
+        updateRedGreenChart(redGreenDiff);
+
+        // Call the function again to keep analyzing the next frame
+        requestAnimationFrame(analyzeFrame);
+    }
+
+    function updateRGBChart(r, g, b) {
+        // Limit the number of data points to keep the chart responsive
+        if (chartDataRGB.labels.length > 100) {
+            chartDataRGB.labels.shift();
+            chartDataRGB.datasets[0].data.shift(); // Red
+            chartDataRGB.datasets[1].data.shift(); // Green
+            chartDataRGB.datasets[2].data.shift(); // Blue
+        }
+
+        // Update the labels (frame count)
+        chartDataRGB.labels.push(frameCount++);
+        
+        // Push new data to each dataset
+        chartDataRGB.datasets[0].data.push(r);
+        chartDataRGB.datasets[1].data.push(g);
+        chartDataRGB.datasets[2].data.push(b);
+
+        // Update the chart
+        rgbChart.update();
+    }
+
+    function updateRedGreenChart(redGreenDiff) {
+        // Limit the number of data points to keep the chart responsive
+        if (chartDataRedGreen.labels.length > 100) {
+            chartDataRedGreen.labels.shift();
+            chartDataRedGreen.datasets[0].data.shift(); // Red-Green Difference
+        }
+
+        // Update the labels (frame count)
+        chartDataRedGreen.labels.push(frameCount);
+        
+        // Push new data to the Red-Green difference dataset
+        chartDataRedGreen.datasets[0].data.push(redGreenDiff);
+
+        // Update the chart
+        redGreenChart.update();
+    }
+</script>
+
+</body>
+</html>
