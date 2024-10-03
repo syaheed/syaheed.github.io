@@ -32,7 +32,7 @@
     // Setup for RGB Chart (Chart.js)
     const ctxRGB = document.getElementById('rgbChart').getContext('2d');
     const chartDataRGB = {
-        labels: [], // Timestamps in hh:mm:ss format
+        labels: [], // Timestamps in hh:mm:ss.x format
         datasets: [
             {
                 label: 'Red',
@@ -61,7 +61,7 @@
         options: {
             scales: {
                 x: { 
-                    title: { display: true, text: 'Time (hh:mm:ss)' },
+                    title: { display: true, text: 'Time (hh:mm:ss.x)' },
                     min: 0, 
                     max: 50 
                 },
@@ -77,7 +77,7 @@
     // Setup for Red-Green Difference Chart (Chart.js)
     const ctxRedGreen = document.getElementById('redGreenChart').getContext('2d');
     const chartDataRedGreen = {
-        labels: [], // Timestamps in hh:mm:ss format
+        labels: [], // Timestamps in hh:mm:ss.x format
         datasets: [
             {
                 label: 'Red - Green',
@@ -94,7 +94,7 @@
         options: {
             scales: {
                 x: { 
-                    title: { display: true, text: 'Time (hh:mm:ss)' },
+                    title: { display: true, text: 'Time (hh:mm:ss.x)' },
                     min: 0, 
                     max: 50 
                 },
@@ -152,7 +152,7 @@
         // Calculate the Red - Green difference
         const redGreenDiff = (meanR - meanG).toFixed(2);
 
-        // Get current time in hh:mm:ss format
+        // Get current time in hh:mm:ss.x format
         const currentTime = getCurrentTime();
 
         // Update the charts with new data and time
@@ -175,7 +175,7 @@
             chartDataRGB.datasets[2].data.shift(); // Blue
         }
 
-        // Update the labels (time in hh:mm:ss format)
+        // Update the labels (time in hh:mm:ss.x format)
         chartDataRGB.labels.push(timeLabel);
         
         // Push new data to each dataset
@@ -198,7 +198,7 @@
             chartDataRedGreen.datasets[0].data.shift(); // Red-Green Difference
         }
 
-        // Update the labels (time in hh:mm:ss format)
+        // Update the labels (time in hh:mm:ss.x format)
         chartDataRedGreen.labels.push(timeLabel);
         
         // Push new data to the Red-Green difference dataset
@@ -231,13 +231,14 @@
         lastTimestamp = timestamp;
     }
 
-    // Helper function to get the current time in hh:mm:ss format
+    // Helper function to get the current time in hh:mm:ss.x format
     function getCurrentTime() {
         const now = new Date();
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const seconds = String(now.getSeconds()).padStart(2, '0');
-        return `${hours}:${minutes}:${seconds}`;
+        const milliseconds = String(Math.floor(now.getMilliseconds() / 100)).padStart(1, '0'); // Get milliseconds rounded to 1 digit
+        return `${hours}:${minutes}:${seconds}.${milliseconds}`;
     }
 </script>
 
