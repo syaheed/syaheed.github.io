@@ -32,7 +32,7 @@
     // Setup for RGB Chart (Chart.js)
     const ctxRGB = document.getElementById('rgbChart').getContext('2d');
     const chartDataRGB = {
-        labels: [], // Timestamps or frame indices
+        labels: [], // Timestamps in hh:mm:ss format
         datasets: [
             {
                 label: 'Red',
@@ -61,9 +61,9 @@
         options: {
             scales: {
                 x: { 
-                    title: { display: true, text: 'Frame' },
-                    min: 0, // Start range at frame 0
-                    max: 50 // Show only the most recent 50 frames at any given time
+                    title: { display: true, text: 'Time (hh:mm:ss)' },
+                    min: 0, 
+                    max: 50 
                 },
                 y: { 
                     title: { display: true, text: 'Mean Value' }, 
@@ -77,7 +77,7 @@
     // Setup for Red-Green Difference Chart (Chart.js)
     const ctxRedGreen = document.getElementById('redGreenChart').getContext('2d');
     const chartDataRedGreen = {
-        labels: [], // Timestamps or frame indices
+        labels: [], // Timestamps in hh:mm:ss format
         datasets: [
             {
                 label: 'Red - Green',
@@ -94,9 +94,9 @@
         options: {
             scales: {
                 x: { 
-                    title: { display: true, text: 'Frame' },
-                    min: 0, // Start range at frame 0
-                    max: 50 // Show only the most recent 50 frames at any given time
+                    title: { display: true, text: 'Time (hh:mm:ss)' },
+                    min: 0, 
+                    max: 50 
                 },
                 y: { 
                     title: { display: true, text: 'Difference (Red - Green)' }
@@ -152,9 +152,12 @@
         // Calculate the Red - Green difference
         const redGreenDiff = (meanR - meanG).toFixed(2);
 
-        // Update the charts with new data
-        updateRGBChart(meanR, meanG, meanB);
-        updateRedGreenChart(redGreenDiff);
+        // Get current time in hh:mm:ss format
+        const currentTime = getCurrentTime();
+
+        // Update the charts with new data and time
+        updateRGBChart(meanR, meanG, meanB, currentTime);
+        updateRedGreenChart(redGreenDiff, currentTime);
 
         // Calculate FPS
         calculateFPS(timestamp);
@@ -163,7 +166,7 @@
         requestAnimationFrame(analyzeFrame);
     }
 
-    function updateRGBChart(r, g, b) {
+    function updateRGBChart(r, g, b, timeLabel) {
         // Limit the number of data points to keep the chart responsive
         if (chartDataRGB.labels.length > 100) {
             chartDataRGB.labels.shift();
@@ -172,38 +175,38 @@
             chartDataRGB.datasets[2].data.shift(); // Blue
         }
 
-        // Update the labels (frame count)
-        chartDataRGB.labels.push(frameCount++);
+        // Update the labels (time in hh:mm:ss format)
+        chartDataRGB.labels.push(timeLabel);
         
         // Push new data to each dataset
         chartDataRGB.datasets[0].data.push(r);
         chartDataRGB.datasets[1].data.push(g);
         chartDataRGB.datasets[2].data.push(b);
 
-        // Adjust the x-axis range for the most recent 50 frames
-        rgbChart.options.scales.x.min = frameCount > 50 ? frameCount - 50 : 0;
-        rgbChart.options.scales.x.max = frameCount;
+        // Adjust the x-axis range for the most recent 50 time points
+        rgbChart.options.scales.x.min = chartDataRGB.labels.length > 50 ? chartDataRGB.labels.length - 50 : 0;
+        rgbChart.options.scales.x.max = chartDataRGB.labels.length;
         
         // Update the chart
         rgbChart.update();
     }
 
-    function updateRedGreenChart(redGreenDiff) {
+    function updateRedGreenChart(redGreenDiff, timeLabel) {
         // Limit the number of data points to keep the chart responsive
         if (chartDataRedGreen.labels.length > 100) {
             chartDataRedGreen.labels.shift();
             chartDataRedGreen.datasets[0].data.shift(); // Red-Green Difference
         }
 
-        // Update the labels (frame count)
-        chartDataRedGreen.labels.push(frameCount);
+        // Update the labels (time in hh:mm:ss format)
+        chartDataRedGreen.labels.push(timeLabel);
         
         // Push new data to the Red-Green difference dataset
         chartDataRedGreen.datasets[0].data.push(redGreenDiff);
 
-        // Adjust the x-axis range for the most recent 50 frames
-        redGreenChart.options.scales.x.min = frameCount > 50 ? frameCount - 50 : 0;
-        redGreenChart.options.scales.x.max = frameCount;
+        // Adjust the x-axis range for the most recent 50 time points
+        redGreenChart.options.scales.x.min = chartDataRedGreen.labels.length > 50 ? chartDataRedGreen.labels.length - 50 : 0;
+        redGreenChart.options.scales.x.max = chartDataRedGreen.labels.length;
         
         // Update the chart
         redGreenChart.update();
@@ -226,6 +229,15 @@
             fpsDisplay.textContent = avgFPS;
         }
         lastTimestamp = timestamp;
+    }
+
+    // Helper function to get the current time in hh:mm:ss format
+    function getCurrentTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
     }
 </script>
 
