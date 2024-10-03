@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Access with RGB, Red-Green Graphs, Peak Detection, and BPM</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h1>Access Phone Back Camera and Analyze RGB Values</h1>
+<video id="video" width="640" height="480" autoplay></video>
+<canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+<!-- Chart to display the RGB values -->
+<canvas id="rgbChart" width="400" height="200"></canvas>
+
+<!-- Chart to display the Red - Green difference -->
+<canvas id="redGreenChart" width="400" height="200"></canvas>
+
+<!-- Display the FPS and BPM -->
+<p>FPS: <span id="fpsDisplay">Calculating...</span></p>
+<p>BPM: <span id="bpmDisplay">Calculating...</span></p>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const fpsDisplay = document.getElementById('fpsDisplay');
+    const bpmDisplay = document.getElementById('bpmDisplay');
+
+    let lastTimestamp = 0; // To keep track of the previous frame time
+    let frameTimes = []; // Array to store time differences between frames
+    let peakTimes = []; // Array to store the times of detected peaks for BPM calculation
+
+    // Setup for RGB Chart (Chart.js)
+    const ctxRGB = document.getElementById('rgbChart').getContext('2d');
+    const chartDataRGB = {
+        labels: [], // Timestamps in hh:mm:ss.x format
+        datasets: [
+            {
+                label: 'Red',
+                borderColor: 'red',
+                data: [],
+                fill: false,
+            },
+            {
+                label: 'Green',
+                borderColor: 'green',
+                data: [],
+                fill: false,
+            },
+            {
+                label: 'Blue',
+                borderColor: 'blue',
+                data: [],
+                fill: false,
+            }
+        ]
+    };
+
+    const rgbChart = new Chart(ctxRGB, {
+        type: 'line',
+        data: chartDataRGB,
+        options: {
+            scales: {
+                x: { 
+                    title: { display: true, text: 'Time (hh:mm:ss.x)' },
+                    min: 0, 
+                    max: 50 
+                },
+                y: { 
+                    title: { display: true, text: 'Mean Value' }, 
+                    min: 0, 
+                    max: 255 
+                }
+            }
+        }
+    });
+
+    // Setup for Red-Green Difference Chart (Chart.js)
+    const ctxRedGreen = document.getElementById('redGreenChart').getContext('2d');
+    const chartDataRedGreen = {
+        labels: [], // Timestamps in hh:mm:ss.x format
+        datasets: [
+            {
+                label: 'Red - Green',
+                borderColor: 'purple',
+                data: [],
+                fill: false,
+            }
+        ]
+    };
+
+    const redGreenChart = new Chart(ctxRedGreen, {
+        type: 'line',
+        data: chartDataRedGreen,
+        options: {
+            scales: {
+                x: { 
+                    title: { display: true, text: 'Time (hh:mm:ss.x)' },
+                    min: 0, 
+                    max: 50 
+                },
+                y: { 
+                    title: { display: true, text: 'Difference (Red - Green)' }
+                }
+            }
+        }
+    });
+
+    // Check if the browser supports the getUserMedia API
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Request the back (environment) camera
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } })
+        .then(function(stream) {
+            // Set the video stream to the video element
+            video.srcObject = stream;
+            // Start analyzing the video frames once the video starts playing
+            video.addEventListener('loadeddata', analyzeFrame);
+        })
+        .catch(function(err) {
+            console.log("Error: " + err);
+        });
+    } else {
+        alert("Sorry, your browser does not support camera access.");
+    }
+
+    let frameCount = 0;
+
+    function analyzeFrame(timestamp) {
+        const context = canvas.getContext('2d');
+
+        // Draw the current video frame onto the canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Get the pixel data from the canvas
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+
+        let totalR = 0, totalG = 0, totalB = 0;
+        let numPixels = pixels.length / 4;
+
+        // Loop through each pixel and accumulate R, G, B values
+        for (let i = 0; i < pixels.length; i += 4) {
+            totalR += pixels[i];     // Red channel
+            totalG += pixels[i + 1]; // Green channel
+            totalB += pixels[i + 2]; // Blue channel
+        }
+
+        // Calculate the mean for each channel
+        const meanR = (totalR / numPixels).toFixed(2);
+        const meanG = (totalG / numPixels).toFixed(2);
+        const meanB = (totalB / numPixels).toFixed(2);
+
+        // Calculate the Red - Green difference
+        const redGreenDiff = (meanR - meanG).toFixed(2);
+
+        // Get current time in hh:mm:ss.x format
+        const currentTime = getCurrentTime();
+
+        // Update the charts with new data and time
+        updateRGBChart(meanR, meanG, meanB, currentTime);
+        updateRedGreenChart(redGreenDiff, currentTime);
+
+        // Perform peak detection on the Red-Green difference
+        detectPeaks(redGreenDiff, currentTime);
+
+        // Calculate FPS
+        calculateFPS(timestamp);
+
+        // Call the function again to keep analyzing the next frame
+        requestAnimationFrame(analyzeFrame);
+    }
+
+    function updateRGBChart(r, g, b, timeLabel) {
+        // Limit the number of data points to keep the chart responsive
+        if (chartDataRGB.labels.length > 100) {
+            chartDataRGB.labels.shift();
+            chartDataRGB.datasets[0].data.shift(); // Red
+            chartDataRGB.datasets[1].data.shift(); // Green
+            chartDataRGB.datasets[2].data.shift(); // Blue
+        }
+
+        // Update the labels (time in hh:mm:ss.x format)
+        chartDataRGB.labels.push(timeLabel);
+        
+        // Push new data to each dataset
+        chartDataRGB.datasets[0].data.push(r);
+        chartDataRGB.datasets[1].data.push(g);
+        chartDataRGB.datasets[2].data.push(b);
+
+        // Adjust the x-axis range for the most recent 50 time points
+        rgbChart.options.scales.x.min = chartDataRGB.labels.length > 50 ? chartDataRGB.labels.length - 50 : 0;
+        rgbChart.options.scales.x.max = chartDataRGB.labels.length;
+        
+        // Update the chart
+        rgbChart.update();
+    }
+
+    function updateRedGreenChart(redGreenDiff, timeLabel) {
+        // Limit the number of data points to keep the chart responsive
+        if (chartDataRedGreen.labels.length > 100) {
+            chartDataRedGreen.labels.shift();
+            chartDataRedGreen.datasets[0].data.shift(); // Red-Green Difference
+        }
+
+        // Update the labels (time in hh:mm:ss.x format)
+        chartDataRedGreen.labels.push(timeLabel);
+        
+        // Push new data to the Red-Green difference dataset
+        chartDataRedGreen.datasets[0].data.push(redGreenDiff);
+
+        // Adjust the x-axis range for the most recent 50 time points
+        redGreenChart.options.scales.x.min = chartDataRedGreen.labels.length > 50 ? chartDataRedGreen.labels.length - 50 : 0;
+        redGreenChart.options.scales.x.max = chartDataRedGreen.labels.length;
+        
+        // Update the chart
+        redGreenChart.update();
+    }
+
+    function detectPeaks(currentValue, currentTime) {
+        const redGreenData = chartDataRedGreen.datasets[0].data;
+
+        // Minimum data length to perform peak detection
+        if (redGreenData.length > 3) {
+            const secondLast = redGreenData[redGreenData.length - 2];
+            const last = redGreenData[redGreenData.length - 1];
+
+            // Detect peak: current point should be lower than the last point, and the last point should be greater than the second last
+            if (last > secondLast && last > currentValue) {
+                const peakTime = new Date(); // Get current peak time
+
+                // Store the peak time
+                peakTimes.push(peakTime);
+
+                // Keep only recent peaks
+                if (peakTimes.length > 2) {
+                    peakTimes.shift();
+                }
+
+                // If we have at least 2 peaks, calculate BPM
+                if (peakTimes.length >= 2) {
+                    const interval = (peakTimes[1] - peakTimes[0]) / 1000; // Convert interval to seconds
+                    const bpm = (60 / interval).toFixed(2); // Convert to beats per minute
+
+                    // Display BPM
+                    bpmDisplay.textContent = bpm;
+                }
+            }
+        }
+    }
+
+    function calculateFPS(timestamp) {
+        if (lastTimestamp) {
+            // Calculate the time difference between the current and previous frames
+            const delta = timestamp - lastTimestamp;
+            const fps = 1000 / delta;
+
+            // Add the current frame time to the array and limit it to the last 20 samples
+            frameTimes.push(fps);
+            if (frameTimes.length > 20) frameTimes.shift();
+
+            // Calculate the average FPS
+            const avgFPS = (frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length).toFixed(2);
+
+            // Display the average FPS
+            fpsDisplay.textContent = avgFPS;
+        }
+        lastTimestamp = timestamp;
+    }
+
+    // Helper function to get the current time in hh:mm:ss.x format
+    function getCurrentTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const milliseconds = String(Math.floor(now.getMilliseconds() / 100)).padStart(1, '0'); // Get milliseconds rounded to 1 digit
+        return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+    }
+</script>
+
+</body>
+</html>
