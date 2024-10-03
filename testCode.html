@@ -3,23 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Access with Pixel Analysis</title>
+    <title>Camera Access with RGB Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<h1>Access Phone Back Camera and Analyze Pixels</h1>
+<h1>Access Phone Back Camera and Analyze RGB Values</h1>
 <video id="video" width="640" height="480" autoplay></video>
 <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
-<p>Mean R: <span id="meanR"></span></p>
-<p>Mean G: <span id="meanG"></span></p>
-<p>Mean B: <span id="meanB"></span></p>
+
+<!-- Chart to display the RGB values -->
+<canvas id="rgbChart" width="400" height="200"></canvas>
 
 <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
-    const meanR = document.getElementById('meanR');
-    const meanG = document.getElementById('meanG');
-    const meanB = document.getElementById('meanB');
+
+    // Setup for Chart.js
+    const ctx = document.getElementById('rgbChart').getContext('2d');
+    const chartData = {
+        labels: [], // Timestamps or frame indices
+        datasets: [
+            {
+                label: 'Red',
+                borderColor: 'red',
+                data: [],
+                fill: false,
+            },
+            {
+                label: 'Green',
+                borderColor: 'green',
+                data: [],
+                fill: false,
+            },
+            {
+                label: 'Blue',
+                borderColor: 'blue',
+                data: [],
+                fill: false,
+            }
+        ]
+    };
+
+    const rgbChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+            scales: {
+                x: { title: { display: true, text: 'Frame' } },
+                y: { title: { display: true, text: 'Mean Value' }, min: 0, max: 255 }
+            }
+        }
+    });
 
     // Check if the browser supports the getUserMedia API
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -37,6 +72,8 @@
     } else {
         alert("Sorry, your browser does not support camera access.");
     }
+
+    let frameCount = 0;
 
     function analyzeFrame() {
         const context = canvas.getContext('2d');
@@ -59,12 +96,36 @@
         }
 
         // Calculate the mean for each channel
-        meanR.textContent = (totalR / numPixels).toFixed(2);
-        meanG.textContent = (totalG / numPixels).toFixed(2);
-        meanB.textContent = (totalB / numPixels).toFixed(2);
+        const meanR = (totalR / numPixels).toFixed(2);
+        const meanG = (totalG / numPixels).toFixed(2);
+        const meanB = (totalB / numPixels).toFixed(2);
+
+        // Update the chart with new data
+        updateChart(meanR, meanG, meanB);
 
         // Call the function again to keep analyzing the next frame
         requestAnimationFrame(analyzeFrame);
+    }
+
+    function updateChart(r, g, b) {
+        // Limit the number of data points to keep the chart responsive
+        if (chartData.labels.length > 100) {
+            chartData.labels.shift();
+            chartData.datasets[0].data.shift(); // Red
+            chartData.datasets[1].data.shift(); // Green
+            chartData.datasets[2].data.shift(); // Blue
+        }
+
+        // Update the labels (frame count)
+        chartData.labels.push(frameCount++);
+        
+        // Push new data to each dataset
+        chartData.datasets[0].data.push(r);
+        chartData.datasets[1].data.push(g);
+        chartData.datasets[2].data.push(b);
+
+        // Update the chart
+        rgbChart.update();
     }
 </script>
 
