@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oddball</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100vh;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+        #instructions, #result, #countdown {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="instructions">
+        <h1>Oddball</h1>
+        <p>Click the mouse when you see "X" and do nothing when you see "O".</p>
+        <p>Please enter your Participant ID:</p>
+        <input type="text" id="participantId" required>
+        <button onclick="startCountdown()">Start Experiment</button>
+    </div>
+    <div id="countdown">
+        <h1>Experiment starting in <span id="countdown-number">3</span>...</h1>
+    </div>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <div id="result">
+        <h1>Experiment Complete</h1>
+        <button onclick="downloadCSV()">Download Results</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const instructionsDiv = document.getElementById('instructions');
+        const countdownDiv = document.getElementById('countdown');
+        const countdownNumber = document.getElementById('countdown-number');
+        const resultDiv = document.getElementById('result');
+        const participantIdInput = document.getElementById('participantId');
+
+        let participantId;
+        const exptName = "oddball";		
+        const backgroundColor = "black";
+        const textColor = "white";
+        const stimulusTime = 700; // in milliseconds
+        const numTrials = 20; // 
+        const targetPercentage = 20; // percentage of trials that are targets
+        const trials = [];
+        let currentTrial = 0;
+        let startTime, stimulus, responseTime, ISI;
+        let stimulusAppearTime, stimulusDisappearTime, responsePressTime; // New variables for timestamps
+        let experimentStartTime; // New variable for experiment start time
+        let hits = 0, falseAlarms = 0, correctRejections = 0, misses = 0;
+        let totalReactionTime = 0;
+        let stimulusShown = false;
+
+        function startCountdown() {
+            participantId = participantIdInput.value;
+            if (!participantId) {
+                alert("Please enter Participant ID");
+                return;
+            }
+
+            instructionsDiv.style.display = "none";
+            countdownDiv.style.display = "block";
+
+            let countdownValue = 3;
+            countdownNumber.textContent = countdownValue;
+
+            const countdownInterval = setInterval(() => {
+                countdownValue--;
+                countdownNumber.textContent = countdownValue;
+                if (countdownValue <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownDiv.style.display = "none";
+                    startExperiment();
+                }
+            }, 1000);
+        }
+
+        function startExperiment() {
+            experimentStartTime = Date.now(); // Record experiment start time as a Unix timestamp in milliseconds
+            canvas.style.display = "block";
+            generateTrials();
+            ISI = getRandomISI();
+            requestAnimationFrame(showStimulus);
+        }
+
+        function generateTrials() {
+            let targetTrials = Math.round(numTrials * (targetPercentage / 100));
+            let nonTargetTrials = numTrials - targetTrials;
+
+            for (let i = 0; i < targetTrials; i++) {
+                trials.push({
+                    isTarget: true,
+                    stimulus: "X",
+                    ISI: getRandomISI()
+                });
+            }
+
+            for (let i = 0; i < nonTargetTrials; i++) {
+                trials.push({
+                    isTarget: false,
+                    stimulus: "O",
+                    ISI: getRandomISI()
+                });
+            }
+
+            // Shuffle the trials array
+            shuffleArray(trials);
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function getRandomISI() {
+            return Math.floor(Math.random() * (300 + 1)) + 700;
+        }
+
+        function showStimulus(timestamp) {
+            if (!stimulusShown) {
+                stimulus = trials[currentTrial].stimulus;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Set the fill color based on the stimulus
+                if (stimulus === "X") {
+                    ctx.fillStyle = "red";
+                } else if (stimulus === "O") {
+                    ctx.fillStyle = "white";
+                }
+
+                ctx.font = "100px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(stimulus, canvas.width / 2, canvas.height / 2);
+
+                stimulusAppearTime = Date.now(); // Record the stimulus appearance time
+                startTime = stimulusAppearTime;
+                responseTime = null;
+                responsePressTime = null; // Reset the response time
+                document.addEventListener('click', handleMouseClick);
+
+                stimulusShown = true;
+                requestAnimationFrame(clearStimulus);
+            }
+        }
+
+        function clearStimulus(timestamp) {
+            if (Date.now() - startTime >= stimulusTime) {
+                document.removeEventListener('click', handleMouseClick);
+                
+                stimulusDisappearTime = Date.now(); // Record the stimulus disappearance time
+                
+                recordTrial();
+                currentTrial++;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (currentTrial < numTrials) {
+                    ISI = trials[currentTrial].ISI;
+                    stimulusShown = false;
+                    setTimeout(() => {
+                        requestAnimationFrame(showStimulus);
+                    }, ISI);
+                } else {
+                    setTimeout(() => {
+                        endExperiment();
+                    }, 1000); // Delay the end screen by 1 second
+                }
+            } else {
+                requestAnimationFrame(clearStimulus);
+            }
+        }
+
+        function handleMouseClick(event) {
+            responsePressTime = Date.now(); // Record the response time
+            responseTime = responsePressTime - stimulusAppearTime;
+        }
+
+        function recordTrial() {
+            const isTarget = trials[currentTrial].isTarget;
+            const correctResponse = isTarget ? responseTime !== null : responseTime === null;
+            const localTime = new Date().toLocaleTimeString();
+
+            if (isTarget && responseTime !== null) {
+                hits++;
+                totalReactionTime += responseTime;
+            } else if (isTarget && responseTime === null) {
+                misses++;
+            } else if (!isTarget && responseTime !== null) {
+                falseAlarms++;
+            } else {
+                correctRejections++;
+            }
+
+            // Add timestamps to the trial data
+            trials[currentTrial].stimulusAppearTime = stimulusAppearTime;
+            trials[currentTrial].stimulusDisappearTime = stimulusDisappearTime;
+            trials[currentTrial].responsePressTime = responsePressTime;
+            trials[currentTrial].responseTime = responseTime;
+            trials[currentTrial].experimentStartTime = experimentStartTime; // Add experiment start time as a Unix timestamp
+            trials[currentTrial].correct = correctResponse ? 1 : 0;
+            trials[currentTrial].time = localTime;
+        }
+
+        function endExperiment() {
+            canvas.style.display = "none";
+            resultDiv.style.display = "block";
+        }
+
+        function downloadCSV() {
+            const date = new Date();
+            const dateString = date.toISOString().split('T')[0];
+            const timeString = date.toTimeString().split(' ')[0];
+            const filename = `${exptName}_${participantId}_${dateString}_${timeString}.csv`;
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "PID,Expt,ExperimentStartTime,Date,Time,Stim,StimDur,ISI,RT,isTarget,Responded,Correct,StimulusAppearTime,StimulusDisappearTime,ResponsePressTime\n";
+            trials.forEach(trial => {
+                csvContent += [
+                    participantId,
+                    exptName,
+                    trial.experimentStartTime, // Add experiment start time as a Unix timestamp
+                    dateString,
+                    trial.time,
+                    trial.stimulus,
+                    stimulusTime,
+                    trial.ISI,
+                    trial.responseTime || "",
+                    trial.isTarget ? 1 : 0,
+                    trial.responseTime !== null ? 1 : 0,
+                    trial.correct,
+                    trial.stimulusAppearTime || "",
+                    trial.stimulusDisappearTime || "",
+                    trial.responsePressTime || ""
+                ].join(",") + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            instructionsDiv.style.display = "block";
+        });
+    </script>
+</body>
+</html>
