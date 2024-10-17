@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touch and Click Test</title>
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            touch-action: none; /* Enable multitouch */
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 20px;
+        }
+        .square {
+            background-color: white;
+            width: 100px;
+            height: 100px;
+            touch-action: none;
+        }
+        .square:hover {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        <div class="square" data-index="1"></div>
+        <div class="square" data-index="2"></div>
+        <div class="square" data-index="3"></div>
+        <div class="square" data-index="4"></div>
+        <div class="square" data-index="5"></div>
+        <div class="square" data-index="6"></div>
+        <div class="square" data-index="7"></div>
+        <div class="square" data-index="8"></div>
+        <div class="square" data-index="9"></div>
+    </div>
+
+    <script>
+        const squares = document.querySelectorAll('.square');
+
+        squares.forEach(square => {
+            // Handle mouse hover
+            square.addEventListener('mouseover', () => {
+                square.style.backgroundColor = 'yellow';
+            });
+
+            // Handle mouse out
+            square.addEventListener('mouseout', () => {
+                square.style.backgroundColor = 'white';
+            });
+
+            // Handle click or touch
+            square.addEventListener('mousedown', () => {
+                square.style.backgroundColor = 'green';
+            });
+
+            square.addEventListener('mouseup', () => {
+                square.style.backgroundColor = 'white';
+            });
+
+            // Handle touch events for multitouch
+            square.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Prevent the default behavior (scrolling)
+                square.style.backgroundColor = 'green';
+            });
+
+            square.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                square.style.backgroundColor = 'white';
+            });
+        });
+    </script>
+</body>
+</html>
