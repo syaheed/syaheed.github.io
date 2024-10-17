@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Faux 3D with Raycasting and Collision Detection</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+        canvas {
+            display: block;
+        }
+        #fullscreen-button {
+            position: absolute;
+            bottom: 20px;
+            background-color: grey;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="fullscreen-button">Go Fullscreen</div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const context = canvas.getContext("2d");
+        const fullscreenButton = document.getElementById('fullscreen-button');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // World map (1 = wall, 0 = empty space)
+        const worldMap = [
+            [1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 0, 1, 0, 1],
+            [1, 0, 1, 0, 0, 1, 0, 1],
+            [1, 0, 1, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1]
+        ];
+
+        const mapWidth = worldMap[0].length;
+        const mapHeight = worldMap.length;
+
+        // Player state
+        const player = {
+            x: 3.5, // initial position (center of the map)
+            y: 3.5,
+            angle: 0, // initial direction (facing right)
+            fov: Math.PI / 4, // field of view (45 degrees)
+            moveSpeed: 0.05, // movement speed
+            turnSpeed: Math.PI / 180 * 3, // turning speed (in radians)
+            radius: 0.2 // player radius for collision
+        };
+
+        // Raycasting function
+        function castRay(angle) {
+            let sin = Math.sin(angle);
+            let cos = Math.cos(angle);
+
+            let distance = 0;
+            let hit = false;
+
+            while (!hit && distance < 20) {
+                distance += 0.01;
+                let testX = Math.floor(player.x + cos * distance);
+                let testY = Math.floor(player.y + sin * distance);
+
+                // Check for wall collision
+                if (testX < 0 || testX >= mapWidth || testY < 0 || testY >= mapHeight || worldMap[testY][testX] == 1) {
+                    hit = true;
+                }
+            }
+
+            return distance;
+        }
+
+        // Render function
+        function render() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let x = 0; x < canvas.width; x++) {
+                // Calculate ray angle relative to player's FOV
+                let rayAngle = player.angle - player.fov / 2 + (x / canvas.width) * player.fov;
+
+                let distance = castRay(rayAngle);
+
+                // Calculate wall height based on distance
+                let wallHeight = Math.min(canvas.height / distance, canvas.height);
+
+                // Calculate shading based on distance
+                let baseColor = 120;  // Hue between green and blue
+                let saturation = Math.max(0, 100 - distance * 10); // Saturation decreases with distance
+                let lightness = Math.max(20, 100 - distance * 5); // Lightness decreases with distance
+                let color = `hsl(${baseColor}, ${saturation}%, ${lightness}%)`; // Color is HSL-based
+
+                // Draw wall slice
+                context.fillStyle = color;
+                context.fillRect(x, (canvas.height - wallHeight) / 2, 1, wallHeight);
+            }
+        }
+
+        // Collision detection function
+        function checkCollision(newX, newY) {
+            // Check if the new position would collide with a wall
+            let mapX = Math.floor(newX);
+            let mapY = Math.floor(newY);
+
+            // If the player is within the radius of a wall, return true
+            if (worldMap[mapY][mapX] == 1) {
+                return true;
+            }
+
+            // No collision
+            return false;
+        }
+
+        // Navigation (keyboard and touch)
+        let keys = {
+            forward: false,
+            backward: false,
+            left: false,
+            right: false
+        };
+
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'ArrowUp' || event.code === 'KeyW') keys.forward = true;
+            if (event.code === 'ArrowDown' || event.code === 'KeyS') keys.backward = true;
+            if (event.code === 'ArrowLeft' || event.code === 'KeyA') keys.left = true;
+            if (event.code === 'ArrowRight' || event.code === 'KeyD') keys.right = true;
+        });
+
+        document.addEventListener('keyup', (event) => {
+            if (event.code === 'ArrowUp' || event.code === 'KeyW') keys.forward = false;
+            if (event.code === 'ArrowDown' || event.code === 'KeyS') keys.backward = false;
+            if (event.code === 'ArrowLeft' || event.code === 'KeyA') keys.left = false;
+            if (event.code === 'ArrowRight' || event.code === 'KeyD') keys.right = false;
+        });
+
+        function movePlayer() {
+            let newX = player.x;
+            let newY = player.y;
+
+            // Calculate the new position based on the movement keys
+            if (keys.forward) {
+                newX += Math.cos(player.angle) * player.moveSpeed;
+                newY += Math.sin(player.angle) * player.moveSpeed;
+            }
+            if (keys.backward) {
+                newX -= Math.cos(player.angle) * player.moveSpeed;
+                newY -= Math.sin(player.angle) * player.moveSpeed;
+            }
+
+            // Check for collisions before updating the position
+            if (!checkCollision(newX, player.y)) {
+                player.x = newX;
+            }
+            if (!checkCollision(player.x, newY)) {
+                player.y = newY;
+            }
+
+            // Handle turning
+            if (keys.left) {
+                player.angle -= player.turnSpeed;
+            }
+            if (keys.right) {
+                player.angle += player.turnSpeed;
+            }
+        }
+
+        // Fullscreen functionality
+        fullscreenButton.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        // Game loop
+        function gameLoop() {
+            movePlayer();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+
+        // Resize the canvas when the window size changes
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
