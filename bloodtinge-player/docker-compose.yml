@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  app_proxy:
+    environment:
+      # <app-id>_<service-name>_1
+      APP_HOST: bloodtinge-player_web_1
+      APP_PORT: 8743
+
+  web:
+    image: ghcr.io/syaheed/bloodtinge:1.0.0
+    restart: on-failure
+    stop_grace_period: 1m
+    init: true

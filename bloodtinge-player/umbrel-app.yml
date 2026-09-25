@@ -1,0 +1,26 @@
+manifestVersion: 1
+id: bloodtinge-player
+category: media
+name: Bloodtinge
+version: "1.0.0"
+tagline: Local player for the Bloodtinge albums
+description: >-
+  Bloodtinge is a private music player for the Bloodtinge albums.
+  Browse by album, structure, arrangement, and tempo, and play tracks
+  with lyrics, composer notes, and album notes.
+developer: syaheed
+website: ""
+dependencies: []
+repo: ""
+support: ""
+port: 8743
+gallery:
+  - 1.jpg
+path: ""
+defaultUsername: ""
+defaultPassword: ""
+releaseNotes: >-
+  First Umbrel package. The site, cover art, and mp3s are served from
+  the app image.
+submitter: syaheed
+submission: ""
